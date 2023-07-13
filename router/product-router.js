@@ -1,24 +1,18 @@
 const express = require('express');
 const fs = require('fs').promises;
-
+const path = require('path');
 const productRouter = express.Router();
+
+const productsFilePath = path.join(__dirname, '..', 'components', 'product.json');
 
 // Obtener todos los productos
 productRouter.get('/', async (req, res) => {
 
     try {
-      const data = await fs.readFile('./components/product.json', 'utf8');
+      const data = await fs.readFile('productsFilePath', 'utf8');
       const products = JSON.parse(data);
   
-      let limitedProducts = products;
-      if (req.query.limit) {
-        const limit = parseInt(req.query.limit);
-        if (!isNaN(limit) && limit > 0) {
-          limitedProducts = products.slice(0, limit);
-        }
-      }
-  
-      res.json(limitedProducts);
+      res.json(products);
   
     } catch (error) {
       console.error('Error al obtener los productos', error);
@@ -31,7 +25,7 @@ productRouter.get('/:pid', async (req, res) => {
     const productId = parseInt(req.params.pid)
   
     try {
-      const data = await fs.readFile('./components/product.json', 'utf8');
+      const data = await fs.readFile(productsFilePath, 'utf8');
       const products = JSON.parse(data);
       const product = products.find((p) => p.id === productId);
       if (product) {
@@ -50,7 +44,7 @@ productRouter.post('/', async (req, res) => {
     try {
       const nuevoProducto = req.body;
   
-      const data = await fs.readFile('./components/product.json', 'utf8');
+      const data = await fs.readFile(productsFilePath, 'utf8');
       const productos = JSON.parse(data);
   
       if (productos.length > 0) {
@@ -60,7 +54,9 @@ productRouter.post('/', async (req, res) => {
         nuevoProducto.id = 1;
       }
       productos.push(nuevoProducto);
-      await fs.writeFile('./components/product.json', JSON.stringify(productos, null, 2), 'utf8');
+      await fs.writeFile(productsFilePath, JSON.stringify(productos, null, 2), 'utf8');
+      io.emit('productosActualizados'); // Emitir el evento "productosActualizados" a través del socket
+
       res.status(201).json(nuevoProducto);
     } catch (error) {
       console.error('Error al agregar el producto', error);
@@ -74,7 +70,7 @@ productRouter.put('/:pid', async (req, res) => {
     const updatedProduct = req.body;
   
     try {
-      const data = await fs.readFile('./components/product.json', 'utf8');
+      const data = await fs.readFile(productsFilePath, 'utf8');
       const products = JSON.parse(data);
       const productIndex = products.findIndex((p) => p.id === productId);
   
@@ -88,8 +84,9 @@ productRouter.put('/:pid', async (req, res) => {
           }
         });
   
-        await fs.writeFile('./components/product.json', JSON.stringify(products, null, 2), 'utf8');
-  
+        await fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), 'utf8');
+        io.emit('productosActualizados'); // Emitir el evento "productosActualizados" a través del socket
+        
         res.json(existingProduct);
       } else {
         res.status(404).json({ error: 'Producto no encontrado' });
@@ -106,7 +103,7 @@ productRouter.delete('/:pid', async (req, res) => {
     const productId = parseInt(req.params.pid);
   
     try {
-      const data = await fs.readFile('./components/product.json', 'utf8');
+      const data = await fs.readFile(productsFilePath, 'utf8');
       let products = JSON.parse(data);
       const productIndex = products.findIndex((p) => p.id === productId);
   
@@ -114,8 +111,9 @@ productRouter.delete('/:pid', async (req, res) => {
         const deletedProduct = products[productIndex];
   
         products.splice(productIndex, 1);
-        await fs.writeFile('./components/product.json', JSON.stringify(products, null, 2), 'utf8');
-  
+        await fs.writeFile(productsFilePath, JSON.stringify(products, null, 2), 'utf8');
+        io.emit('productosActualizados'); // Emitir el evento "productosActualizados" a través del socket
+
         res.status(200).json({ message: 'Producto eliminado exitosamente', deletedProduct });
       } else {
         res.status(404).json({ error: 'Producto no encontrado' });
