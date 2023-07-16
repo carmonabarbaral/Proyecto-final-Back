@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const productRouter = express.Router();
 
-const productsFilePath = path.join(__dirname, '..', 'components', 'product.json');
+const productsFilePath = path.join(__dirname, '..','components','product.json');
 
 // Obtener todos los productos
 productRouter.get('/', async (req, res) => {
