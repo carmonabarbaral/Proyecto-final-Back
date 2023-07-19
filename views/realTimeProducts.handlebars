@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>Lista de Productos</title>
-</head>
-
-<body>
-  <h1>Lista de Productos</h1>
+<h1>Listado de Productos en Tiempo Real</h1>
 
   <ul id="product-list">
     {{#each productos}}
@@ -14,7 +6,11 @@
     {{/each}}
   </ul>
 
-  <script src="/socket.io"></script>
+  {{#if successMessage}}
+  <p>{{successMessage}}</p>
+  {{/if}}
+
+  <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
 
@@ -29,6 +25,3 @@
       });
     });
   </script>
-</body>
-
-</html>

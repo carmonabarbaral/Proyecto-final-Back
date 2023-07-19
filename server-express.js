@@ -3,10 +3,8 @@ const productRouter = require('./router/product-router');
 const cartRouter = require('./router/cart-router');
 
 const path = require('path');
-const handlebars = require('express-handlebars').create({
-  defaultLayout: 'home',
-  layoutsDir: path.join(__dirname,  'views', 'layouts') // Modificación en la ruta
-});
+const handlebars = require('express-handlebars')
+const hbs = handlebars.create()
 const http = require('http');
 const socketIO = require('socket.io');
 const fs = require('fs').promises;
@@ -17,33 +15,25 @@ const io = socketIO(server);
 
 const PORT = 8080;
 
-app.engine('handlebars', handlebars.engine);
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
-app.set('views', path.join(__dirname, 'views','layouts')); // Modificación en la ruta
+app.set('views', path.join(__dirname, 'views'));
 
 // Middleware para procesar el cuerpo de las solicitudes como JSON
 app.use(express.json());
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 
 // Rutas
 app.use('/api/products', productRouter);
 app.use('/api/cart', cartRouter);
 
-app.get('/', async (req, res) => {
-  try {
-    const productsFilePath = path.join(__dirname, `components`,`product.json`); // Modificación en la ruta
-    const data = await fs.readFile(productsFilePath, 'utf8');
-    const products = JSON.parse(data);
-
-    res.render('home', { productos: products });
-  } catch (error) {
-    console.error('Error al obtener los productos', error);
-    res.status(500).json({ error: 'Error al obtener los productos' });
-  }
-});
-
 app.get('/realTimeProducts', async (req, res) => {
   try {
-    const productsFilePath = path.join(__dirname, 'components', 'product.json'); // Modificación en la ruta
+    const productsFilePath = path.join(__dirname, 'components', 'product.json');
     const data = await fs.readFile(productsFilePath, 'utf8');
     const products = JSON.parse(data);
 
@@ -54,7 +44,20 @@ app.get('/realTimeProducts', async (req, res) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, '..', 'public'))); // Modificación en la ruta
+app.get('/', async (req, res) => {
+  try {
+    const productsFilePath = path.join(__dirname, 'components', 'product.json');
+    const data = await fs.readFile(productsFilePath, 'utf8');
+    const products = JSON.parse(data);
+
+    res.render('home', { productos: products });
+  } catch (error) {
+    console.error('Error al obtener los productos', error);
+    res.status(500).json({ error: 'Error al obtener los productos' });
+  }
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', (socket) => {
   console.log('Cliente conectado');
@@ -62,22 +65,18 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('Cliente desconectado');
   });
-});
 
-// Escuchar el evento "productosActualizados" y emitir los productos actualizados a través del socket
-io.on('connection', (socket) => {
   socket.on('productosActualizados', async () => {
     try {
-      const productsFilePath = path.join(__dirname, '..', 'components', 'product.json'); // Modificación en la ruta
+      const productsFilePath = path.join(__dirname, 'components', 'product.json');
       const data = await fs.readFile(productsFilePath, 'utf8');
       const products = JSON.parse(data);
-      socket.emit('productosActualizados', { products }); // Emitir los productos actualizados al cliente
+      socket.emit('productosActualizados', { productos }); // Emitir los productos actualizados al cliente
     } catch (error) {
       console.error('Error al obtener los productos', error);
     }
   });
 });
-
 app.set('socketio', io);
 
 // Iniciar el servidor
