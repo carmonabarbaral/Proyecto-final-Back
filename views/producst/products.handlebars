@@ -1,0 +1,38 @@
+<!--<form action="/api/products" method="POST">
+  <label for="name">Nombre: <input type="text" name="name"></label>
+  <label for="price">Precio: <input type="text" name="price"></label>
+  <input type="submit" value="Enviar">
+</form>-->
+
+<form id="formButton">
+  <label for="name">Nombre: <input id="nameInput" type="text" name="name"></label>
+  <label for="price">Precio: <input id="priceInput" type="text" name="price"></label>
+  <input id="sendButton" type="submit" value="Enviar">
+</form>
+
+<!--<h4>Borrar producto</h2>
+<form action="/products/delete" method="POST">
+  <label for="id">Id:<input type="text"></label>
+  <input type="submit" value="Borrar">
+</form>-->
+
+<table id="productos">
+  <tr>
+    <th>Nombre</th>
+    <th>Precio</th>
+    <th>Borrar</th>
+  </tr>
+  {{#each products}}
+    <tr>
+      
+      <td>{{this.code}}</td>
+      <td>{{this.price}}</td>
+      <td><button class="deleteButton" id="deleteButton_{{this._id}}" onclick="deleteProduct({{this._id}})">Borrar</button></td>
+    </tr>
+  {{/each}}
+  
+</table>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/public/js/app.js"></script>
