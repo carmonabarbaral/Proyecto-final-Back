@@ -5,6 +5,7 @@ const viewsRouterFn = require('./router/viewsRouter')
 const socketServer = require('./utils/io')
 const mongoose = require('mongoose')
 const productModel = require('./dao/models/productModels')
+const ProductManagerMongo = require('./dao/manager/productManagerMongo')
 
 const path = require('path');
 const handlebars = require('express-handlebars')
@@ -12,13 +13,14 @@ const hbs = handlebars.create()
 const http = require('http');
 const socketIO = require('socket.io');
 const fs = require('fs').promises;
+const productManager = new ProductManagerMongo();
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
 const PORT = 8080;
-const MONGODB_CONNECT = 'mongodb+srv://barbaracarmona40:<Brunito2023>@cluster0.zy5f7e6.mongodb.net/ecommerce?retryWrites=true&w=majority'
+const MONGODB_CONNECT = 'mongodb+srv://barbaracarmona40:Brunito2023@cluster0.zy5f7e6.mongodb.net/ecommerce?retryWrites=true&w=majority'
 mongoose.connect(MONGODB_CONNECT)
 .then(()=>console.log('conexion DB'))
 .catch((error) => console.log(error))
@@ -86,9 +88,8 @@ app.use('/products', viewsRouter)
 
 app.get('/realTimeProducts', async (req, res) => {
   try {
-    const productsFilePath = path.join(__dirname, 'components', 'product.json');
-    const data = await fs.readFile(productsFilePath, 'utf8');
-    const products = JSON.parse(data);
+    // Consultar los productos desde la base de datos de MongoDB Atlas utilizando el ProductManagerMongo
+    const products = await productManager.getAllProducts();
 
     res.render('realTimeProducts', { productos: products });
   } catch (error) {
@@ -99,9 +100,8 @@ app.get('/realTimeProducts', async (req, res) => {
 
 app.get('/', async (req, res) => {
   try {
-    const productsFilePath = path.join(__dirname, 'components', 'product.json');
-    const data = await fs.readFile(productsFilePath, 'utf8');
-    const products = JSON.parse(data);
+    // Consultar los productos desde la base de datos de MongoDB Atlas utilizando el ProductManagerMongo
+    const products = await productManager.getAllProducts();
 
     res.render('home', { productos: products });
   } catch (error) {
@@ -109,6 +109,7 @@ app.get('/', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener los productos' });
   }
 });
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 

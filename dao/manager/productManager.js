@@ -6,10 +6,14 @@ class ProductManager {
     }
 
     async getAllProducts() {
-        const products = await this.model.find()
+        try{
+            const products = await this.model.find()
 
         return products.map(p => p.toObject())
+    }catch (error){
+        throw error
     }
+}
 
     async getProductById(id) {
         return this.model.findById(id)
