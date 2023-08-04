@@ -1,10 +1,7 @@
 const mongoose = require('mongoose')
 
 const cartSchema = mongoose.Schema({
-    product:{
-        type:String,
-        quantity: Number
-    },
+    product:{type:Array, },
     
 
 })

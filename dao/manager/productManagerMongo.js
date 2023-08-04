@@ -1,6 +1,6 @@
 const productModel = require('../models/productModels')
 
-class ProductManager {
+class ProductManagerMongo {
     constructor() {
         this.model = productModel
     }
@@ -20,7 +20,11 @@ class ProductManager {
             code: body.code,
             stock: body.stock,
             title: body.title,
-            price: body.price
+            price: body.price,
+            category: body.category,
+            thumbnails: body.thumbnails,
+            description: body.description,
+            status: body.status
         })
     }
 
@@ -36,7 +40,11 @@ class ProductManager {
             code: body.code || product.code,
             stock: body.stock || product.stock,
             title: body.title || product.title,
-            price: body.price || product.email
+            price: body.price || product.price,
+            category: body.category || product.category,
+            thumbnails: body.thumbnails || product.thumbnails,
+            description: body.description || product.description,
+            status: body.status || product.status
         }
 
         await this.model.updateOne({ _id: id }, productUpdated)
@@ -58,4 +66,4 @@ class ProductManager {
 
 }
 
-module.exports = ProductManager
+module.exports = ProductManagerMongo
