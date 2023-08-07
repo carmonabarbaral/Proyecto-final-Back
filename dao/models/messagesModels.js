@@ -6,13 +6,13 @@ const messagesSchema = mongoose.Schema({
         unique:true
     },
     timeStamp: {
-        type:date,
+        type:Date,
         default: Date.now,
-        get:(timeStamp) => moment (timeStamp).format ('YYYY,MM,DD'),
+        get:(timeStamp) => moment(timeStamp).format('YYYY,MM,DD'),
     }
-    ,user:{
+    ,message:{
         type:String,
-        unique:true
+        required:true
     }
 })
 

@@ -3,7 +3,8 @@ const express = require('express');
 const productsRouter = require('./router/products-router')
 const productViewRouter = require('./router/ProductsViewsRouter')
 const cartRouter = require('./router/cart-router');
-const cartViewRouter = require('./router/cartViewRouter')
+const cartViewRouter = require('./router/cartViewRouter');
+const messageRouter = require('./router/messenger-router');
 
 const mongoose = require('mongoose')
 const handlebars = require('express-handlebars')
@@ -28,7 +29,8 @@ app.use('/api/products', productsRouter)
 app.use('/products', productViewRouter)
 app.use('/api/carts', cartRouter)
 app.use('/cart', cartViewRouter)
-
+app.use('/messages/new', (req, res) => res.render('messageForm', { message: {} }));
+app.use('/messages/edit/:id', messageRouter);
 app.get('/', (req, res) => {
   res.json({
       status: 'running',
