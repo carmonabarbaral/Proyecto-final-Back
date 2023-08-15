@@ -92,6 +92,68 @@ class CartManagerMongo {
       throw error;
     }
   }
+  async removeProductFromCart(cartId, productId) {
+    try {
+      const cart = await this.cartModel.findById(cartId);
+
+      if (!cart) {
+        throw new Error('Carrito no encontrado');
+      }
+
+      const productIndex = cart.products.findIndex(product => product._id.toString() === productId);
+
+      if (productIndex === -1) {
+        throw new Error('Producto no encontrado en el carrito');
+      }
+
+      cart.products.splice(productIndex, 1);
+
+      await cart.save();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateCart(cartId, updatedProducts) {
+    try {
+      const cart = await this.cartModel.findById(cartId);
+
+      if (!cart) {
+        throw new Error('Carrito no encontrado');
+      }
+
+      cart.products = updatedProducts;
+
+      // Guarda los cambios en el carrito
+      await cart.save();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateProductQuantity(cartId, productId, newQuantity) {
+    try {
+      const cart = await Cart.findById(cartId);
+
+      if (!cart) {
+        throw new Error('Carrito no encontrado');
+      }
+
+      const productIndex = cart.products.findIndex(product => product.product.toString() === productId);
+
+      if (productIndex === -1) {
+        throw new Error('Producto no encontrado en el carrito');
+      }
+
+      cart.products[productIndex].quantity = newQuantity;
+      await cart.save();
+
+      return cart;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
+
 
 module.exports = CartManagerMongo;

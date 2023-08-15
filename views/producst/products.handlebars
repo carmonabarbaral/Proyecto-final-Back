@@ -1,45 +1,67 @@
-<!DOCTYPE html>
 <html>
-<head>
-  <title>Lista de Productos</title>
-</head>
-<body>
-  <h1>Lista de Productos</h1>
-  
-  <h4>Página: {{page}} de {{totalPages}}</h4>
-  
-  <table id="productos">
-    <tr>
-      <th>Codigo</th>
-      <th>Nombre</th>
-      <th>Precio</th>
-      <th></th>
-    </tr>
-    {{#each docs}}
+  <head>
+    <title>Lista de Productos</title>
+  </head>
+  <body>
+    <h1>Lista de Productos</h1>
+
+    <h4>Página: {{page}} de {{totalPages}}</h4>
+
+    <!-- Agregar formulario para filtrar por categoría -->
+    <form action="/products" method="get">
+      <input type="text" name="category" placeholder="Filtrar por categoría" />
+      <button type="submit">Filtrar</button>
+    </form>
+
+    <!-- Agregar formulario para filtrar por stock -->
+    <form action="/products" method="get">
+      <input type="number" name="stock" placeholder="Filtrar por stock" />
+      <button type="submit">Filtrar</button>
+    </form>
+
+    <table id="productos">
       <tr>
-        <td>{{this.code}}</td>
-        <td>{{this.title}}</td>
-        <td>{{this.price}}</td>
-        <td><button>Agregar al carrito</button></td>
+        <th>Codigo</th>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Categoria</th>
+        <th></th>
       </tr>
-    {{/each}}
-  </table>
-  
-  {{#if hasPrevPage }}
-    <a href="/products?page={{prevPage}}&limit={{limit}}&sort={{sort}}">Página previa</a>
-  {{/if}}
+      {{#each docs}}
+        <tr>
+          <td>{{this.code}}</td>
+          <td>{{this.title}}</td>
+          <td>{{this.price}}</td>
+          <td>{{this.category}}</td>
+          <td><form action="/api/carts/64dc0ae899cf055698bb1e9b,"products":[],"__v":{"$numberInt":"0"}}/products/{{this._id}}" method="POST">
+              <button type="submit">Agregar al carrito</button>
+            </form>
+          </td>
+        </tr>
+      {{/each}}
+    </table>
 
-  {{#if hasNextPage }}
-    <a href="/products?page={{nextPage}}&limit={{limit}}&sort={{sort}}">Página siguiente</a>
-  {{/if}}
-<div style="display: flex">
-  <a href="/products?page={{page}}&limit=10&sort={{sort}}">10 por página</a>
-  <a href="/products?page={{page}}&limit=20&sort={{sort}}">20 por página</a>
-  <a href="/products?page={{page}}&limit=50&sort={{sort}}">50 por página</a>
-</div>
-  <a href="/products?page={{page}}&limit={{limit}}&sort=asc">Precio ascendente</a>
-  <a href="/products?page={{page}}&limit={{limit}}&sort=desc">Precio descendente</a>
+    {{#if hasPrevPage}}
+      <a
+        href="/products?page={{prevPage}}&limit={{limit}}&sort={{sort}}&category={{category}}&stock={{stock}}"
+      >Página previa</a>
+    {{/if}}
 
+    {{#if hasNextPage}}
+      <a
+        href="/products?page={{nextPage}}&limit={{limit}}&sort={{sort}}&category={{category}}&stock={{stock}}"
+      >Página siguiente</a>
+    {{/if}}
+    <div style="display: flex">
+      <a href="/products?page={{page}}&limit=10&sort={{sort}}">10 por página</a>
+      <a href="/products?page={{page}}&limit=20&sort={{sort}}">20 por página</a>
+      <a href="/products?page={{page}}&limit=50&sort={{sort}}">50 por página</a>
+    </div>
+    <a href="/products?page={{page}}&limit={{limit}}&sort=asc">Precio ascendente</a>
+    <a href="/products?page={{page}}&limit={{limit}}&sort=desc">Precio
+      descendente</a>
 
-<script src="../../public/js/socket.io.js"></script>
-<script src="../../public/js/products.js"></script>
+    <script src="../public/js/socket.io.js"></script>
+    <script src="../public/js/products.js"></script>
+  </body>
+</html>

@@ -24,7 +24,8 @@ class ProductManager {
             code: body.code,
             stock: body.stock,
             title: body.title,
-            price: body.price
+            price: body.price, 
+            category:body.category
         })
     }
 
