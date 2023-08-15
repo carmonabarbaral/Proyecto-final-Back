@@ -31,6 +31,7 @@ app.use('/api/carts', cartRouter)
 app.use('/cart', cartViewRouter)
 app.use('/messages/new', (req, res) => res.render('messageForm', { message: {} }));
 app.use('/messages/edit/:id', messageRouter);
+
 app.get('/', (req, res) => {
   res.json({
       status: 'running',
@@ -57,8 +58,7 @@ app.listen(PORT, () => console.log(`servidor corriendo en puerto ${PORT}`))
 // const server = http.createServer(app);
 // const io = socketIO(server);
 
-// const MONGODB_CONNECT = 'mongodb+srv://romerodisind:coder2023@cluster0.c9jlz11.mongodb.net/ecommerce?retryWrites=true&w=majority'
-// mongoose.connect(MONGODB_CONNECT)
+
 // .then(()=>console.log('conexion DB'))
 // .catch((error) => console.log(error))
 

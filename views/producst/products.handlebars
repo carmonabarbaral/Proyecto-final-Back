@@ -1,18 +1,45 @@
-<table id="productos">
-  <tr>
-    <th>Codigo</th>
-    <th>Nombre</th>
-    <th>Precio</th>
-  </tr>
-  {{#each products}}
-    <tr>
-      <td>{{this.code}}</td>
-      <td>{{this.title}}</td>
-      <td>{{this.price}}</td>
-  {{/each}}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lista de Productos</title>
+</head>
+<body>
+  <h1>Lista de Productos</h1>
   
-</table>
+  <h4>Página: {{page}} de {{totalPages}}</h4>
+  
+  <table id="productos">
+    <tr>
+      <th>Codigo</th>
+      <th>Nombre</th>
+      <th>Precio</th>
+      <th></th>
+    </tr>
+    {{#each docs}}
+      <tr>
+        <td>{{this.code}}</td>
+        <td>{{this.title}}</td>
+        <td>{{this.price}}</td>
+        <td><button>Agregar al carrito</button></td>
+      </tr>
+    {{/each}}
+  </table>
+  
+  {{#if hasPrevPage }}
+    <a href="/products?page={{prevPage}}&limit={{limit}}&sort={{sort}}">Página previa</a>
+  {{/if}}
+
+  {{#if hasNextPage }}
+    <a href="/products?page={{nextPage}}&limit={{limit}}&sort={{sort}}">Página siguiente</a>
+  {{/if}}
+<div style="display: flex">
+  <a href="/products?page={{page}}&limit=10&sort={{sort}}">10 por página</a>
+  <a href="/products?page={{page}}&limit=20&sort={{sort}}">20 por página</a>
+  <a href="/products?page={{page}}&limit=50&sort={{sort}}">50 por página</a>
+</div>
+  <a href="/products?page={{page}}&limit={{limit}}&sort=asc">Precio ascendente</a>
+  <a href="/products?page={{page}}&limit={{limit}}&sort=desc">Precio descendente</a>
 
 
 <script src="../../public/js/socket.io.js"></script>
-<script src="../../public/js/socket.io.js"></script>
+<script src="../../public/js/products.js"></script>

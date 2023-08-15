@@ -1,4 +1,4 @@
-const socket = io()
+/*const socket = io()
 
 const messagesContainer = document.getElementById('messagesContainer')
 const messageInput = document.getElementById('messageInput')
@@ -40,4 +40,4 @@ socket.on('messages', messagesString => {
     messagesContainer.innerHTML += `
     <div>${message.user}: ${message.message}</div>`
   })
-})
+})*/
