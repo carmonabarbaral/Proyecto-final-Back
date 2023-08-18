@@ -1,8 +1,8 @@
-const productModel = require('../models/productModels')
+const productModels = require('../models/productModels')
 
 class ProductManagerMongo {
     constructor() {
-        this.model = productModel
+        this.model = productModels
     }
 
     async getAllProducts() {

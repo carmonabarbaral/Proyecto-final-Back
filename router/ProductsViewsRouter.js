@@ -2,7 +2,7 @@ const {Router} = require('express')
 const ProductManagerMongo = require('../dao/manager/productManagerMongo')
 const ProductManagerFile = require('../dao/manager/productManagerfs');
 const productsViewsRouter = Router()
-const productModel = require('../dao/models/productModels');
+const productModels = require('../dao/models/productModels');
 
 
 //const USE_MONGO_DB = require('../config/config');
@@ -39,10 +39,10 @@ productsViewsRouter.get('/', async (req, res) => {
   };
 
   try {
-    const products = await productModel.paginate(query, options);
+    const products = await productModels.paginate(query, options);
     console.log('products:', { products});
     products.docs = products.docs.map((product) => product.toObject());
-    return res.render('products', products);
+    return res.render('products', {products});
     
 
   } catch (error) {
