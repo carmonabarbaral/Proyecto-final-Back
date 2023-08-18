@@ -40,9 +40,9 @@ productsViewsRouter.get('/', async (req, res) => {
 
   try {
     const products = await productModels.paginate(query, options);
-    console.log('products:', { products});
+    console.log('products:',  products);
     products.docs = products.docs.map((product) => product.toObject());
-    return res.render('products', {products});
+    return res.render('products', products);
     
 
   } catch (error) {
