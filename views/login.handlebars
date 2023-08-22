@@ -1,8 +1,8 @@
-<h2>Ingresa tu nombre para entrar al chat!</h2>
+<h2>Login</h2>
 
-<form method="POST"  action="/login">
-  <label for="name">Nombre:</label>
-  <input type="text" name="name">
+<form action="/api/sessions/login" method="POST">
+  Email <input type="text" name="email"><br><br>
+  Password <input type="password" name="password"><br><br>
 
-  <input type="submit" value="Enviar">
+  <input type="submit" value="Iniciar sesión">
 </form>

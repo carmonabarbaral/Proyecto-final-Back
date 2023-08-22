@@ -5,9 +5,16 @@ const productViewRouter = require('./router/ProductsViewsRouter')
 const cartRouter = require('./router/cart-router');
 const cartViewRouter = require('./router/cartViewRouter');
 const messageRouter = require('./router/messenger-router');
+const sessionRouter = require('./router/sessionRouter');
+const viewsRouter = require('./router/viewsRouter')
 
 const mongoose = require('mongoose')
+const MongoStore = require ('connect-mongo')
 const handlebars = require('express-handlebars')
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
+
+
 
 const app = express();
 
@@ -31,13 +38,31 @@ app.use('/api/carts', cartRouter)
 app.use('/cart', cartViewRouter)
 app.use('/messages/new', (req, res) => res.render('messageForm', { message: {} }));
 app.use('/messages/edit/:id', messageRouter);
+app.use('/api/sessions', sessionRouter);
+app.use('/', viewsRouter)
+
+app.use(cookieParser('secretkey'))
+app.use(session({
+  store: MongoStore.create({
+    mongoUrl: MONGODB_CONNECT,
+    ttl: 15
+  }),
+  secret: 'secretSession',
+  resave: true,
+  saveUninitialized: true
+}))
 
 app.get('/', (req, res) => {
-  res.json({
-      status: 'running',
+res.json({
+ status: 'running',
       
-  })
 })
+})
+
+app.get('/otro', (req, res) => {
+return res.json(req.session)
+})
+
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`servidor corriendo en puerto ${PORT}`))
