@@ -2,7 +2,14 @@ const {Router} = require('express')
 const ProductManagerMongo = require('../dao/manager/productManagerMongo')
 const ProductManagerFile = require('../dao/manager/productManagerfs');
 const productsViewsRouter = Router()
-const productModels = require('../dao/models/productModels');
+const productModels = require('../dao/models/productModels');;
+const Handlebars = require('handlebars');
+
+Handlebars.registerHelper('buildPaginationLink', (page, currentUrl) => {
+  const queryParams = new URLSearchParams(currentUrl.split('?')[1]);
+  queryParams.set('page', page);
+  return `${currentUrl.split('?')[0]}?${queryParams.toString()}`;
+});
 
 
 //const USE_MONGO_DB = require('../config/config');
@@ -40,16 +47,34 @@ productsViewsRouter.get('/', async (req, res) => {
 
   try {
     const products = await productModels.paginate(query, options);
-    console.log('products:',  products);
-    products.docs = products.docs.map((product) => product.toObject());
-    return res.render('products', products);
+    const allCategories = await productModels.distinct("category");
+    const selectedCategory = category;
+    const categoriesWithSelection = allCategories.map((cat) => ({
+      category: cat,
+      isSelected: cat === selectedCategory,
+    }));
     
+    console.log("products:", products);
+    console.log(products.totalPages)
+    products.docs = products.docs.map((product) => product.toObject());
 
+    const user = req.session.user;
+
+    const pages = [];
+    for (let i = 1; i <= products.totalPages; i++) {
+      pages.push(i);
+    }
+
+    return res.render("products", { products, user, showHeader: true, pages, categoriesWithSelection});
   } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({ status: 'error', error: 'Internal server error' });
+    console.error("Error:", error);
+    return res
+      .status(500)
+      .json({ status: "error", error: "Internal server error" });
   }
 });
+
+module.exports = productsViewsRouter;
 
 
 

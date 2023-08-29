@@ -1,0 +1,88 @@
+/* Estilos para la barra de navegación */
+.custom-navbar {
+    background-color: #f8e1b7;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Estilos para el contenedor de la barra de navegación */
+  .custom-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 0 20px;
+  }
+  
+  /* Estilos para el logo */
+  .custom-logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e25822;
+    text-decoration: none;
+  }
+  
+  /* Estilos para el botón del menú desplegable */
+  .custom-dropdown-toggle {
+    background-color: transparent;
+    border: none;
+    color: #e25822;
+  }
+  
+  /* Estilos para los enlaces de navegación */
+  .custom-nav-link {
+    margin-right: 20px;
+    font-size: 16px;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .custom-nav-link:hover {
+    color: #e25822;
+  }
+  
+  /* Estilos para los botones */
+  .btn-secondary {
+    background-color: #e25822;
+    border-color: #e25822;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #d1410c;
+    border-color: #d1410c;
+  }
+  
+  .btn-primary {
+    background-color: #f8e1b7;
+    border-color: #f8e1b7;
+    color: #e25822;
+  }
+  
+  .btn-primary:hover {
+    background-color: #eac683;
+    border-color: #eac683;
+    color: #e25822;
+  }
+  
+  .btn-danger {
+    background-color: #d9534f;
+    border-color: #d9534f;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c9302c;
+    border-color: #c9302c;
+  }
+  
+  /* Estilos para el ícono del carrito */
+  .bi-cart-fill {
+    width: 20px;
+    height: 20px;
+    fill: #333;
+  }
+  
+  /* Resto de los estilos personalizados */
+  /* ... */
+  
