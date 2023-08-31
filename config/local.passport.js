@@ -2,6 +2,7 @@ const passport = require('passport')
 const passportLocal = require('passport-local')
 const userModel = require('../dao/models/userModels')
 const {createHash, isValidPassword} = require('../utils/passwordHash')
+const userModels = require('../dao/models/userModels')
 
 const LocalStrategy = passportLocal.Strategy
 
@@ -10,7 +11,7 @@ const initializepassport = () => {
         {passReqToCallback: true, usernameField: 'email'},
         async (req, username, password, done) => {
             try {
-                const user = await userModel.findOne({email: username})
+                const user = await userModels.findOne({email: username})
                 if (user) {
                     console.log('Ususario existente')
                     return done(null, false)
@@ -20,7 +21,7 @@ const initializepassport = () => {
                 body.password = createHash(body.password)
                 console.log({body})
 
-                const newUser = await userModel.create(body)
+                const newUser = await userModels.create(body)
 
                 return done(null, newUser)
             } catch (e){
@@ -32,7 +33,7 @@ const initializepassport = () => {
         {usernameField: 'email'},
         async(email, password, done) => {
             try {
-                let user = await userModel.findOne({email: email})
+                let user = await userModels.findOne({email: email})
 
                 if (!user) {
                     console.log('Usuario inexistente')
@@ -63,7 +64,7 @@ const initializepassport = () => {
     passport.deserializeUser(async (id, done) => {
         console.log('deserealizedUser')
         try {
-            const user = await userModel.findById(id);
+            const user = await userModels.findById(id);
             done(null, user);
         } catch (error) {
             done(error);

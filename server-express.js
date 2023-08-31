@@ -3,7 +3,7 @@ const express = require("express");
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 
-//const FileStore = require('session-file-store')
+const FileStore = require('session-file-store')
 const MongoStore = require('connect-mongo')
 
 const productsRouter = require("./router/products-router");
@@ -21,7 +21,7 @@ const handlebars = require("express-handlebars");
 
 const app = express();
 
-//const fileStorage = FileStore(session)
+const fileStorage = FileStore(session)
 
 const initializepassport = require('./config/local.passport');
 
