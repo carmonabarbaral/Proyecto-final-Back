@@ -7,6 +7,7 @@ const {createHash, isValidPassword} = require('../utils/passwordHash')
 
 const sessionRouter = express.Router()
 
+
 // sessionRouter.use('/', authController);
 
 // sessionRouter.get('/',(req, res) =>{
@@ -21,6 +22,7 @@ const sessionRouter = express.Router()
 //         return res.json(`${req.session.name} has visitado la pagina ${req.session.counter} veces`)
 //     }
 // })
+
 sessionRouter.get('/github', passport.authenticate('github', {scope: ['user:email']}), async (req, res) =>{
   console.log('GitHub authentication initiated');
 })

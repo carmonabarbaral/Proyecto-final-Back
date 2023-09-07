@@ -42,3 +42,4 @@ sessionViewRouter.get('/profile', (req, res, next) => {
   })
 
 module.exports = sessionViewRouter
+

@@ -1,9 +1,9 @@
-const UserModel = require('../models/userModels');
+const userModels = require('../models/userModels');
 
 class UserManagerMongo {
     async createUser(name, email, password) {
         try {
-            const newUser = new UserModel({
+            const newUser = new userModels({
                 name,
                 email,
                 password,
@@ -17,7 +17,7 @@ class UserManagerMongo {
 
     async getUserByEmail(email) {
         try {
-            return await UserModel.findOne({ email });
+            return await userModels.findOne({ email });
         } catch (error) {
             throw error;
         }
