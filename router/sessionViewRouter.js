@@ -41,5 +41,16 @@ sessionViewRouter.get('/profile', (req, res, next) => {
     return res.render('profile', { user, showHeader: true })
   })
 
+  // Ruta para la vista de sesión actual
+/*sessionViewRouter.get('/current', (req, res) => {
+  // Verificar si el usuario está autenticado
+  if (req.session.user) {
+    // Renderiza la vista con la información de la sesión actual
+    return res.render('current-session', { user: req.session.user, showHeader: true });
+  } else {
+    // Si el usuario no está autenticado, puedes redirigirlo o mostrar un mensaje de error.
+    return res.redirect('/login');
+  }
+});*/
 module.exports = sessionViewRouter
 

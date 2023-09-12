@@ -94,6 +94,15 @@ sessionRouter.get('/faillogin', (req, res) => {
     error: 'Error al iniciar sesión'
   })
 })
+sessionRouter.get('/current', (req, res) => {
+  if (req.isAuthenticated()) { // Verificar si el usuario está autenticado
+    // req.user contiene la información del usuario autenticado
+    return res.json({ user: req.user });
+  } else {
+    return res.status(401).json({ error: 'Usuario no autenticado' });
+  }
+});
+
 
 sessionRouter.post('/logout', (req, res) => {
     req.session.destroy((err) => {
