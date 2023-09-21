@@ -1,5 +1,5 @@
-const cartModel = require('../models/cartModels')
-const productModel = require('../models/productModels')
+const cartModel = require('../models/cartModels');
+const productModels = require('../models/productModels');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -64,7 +64,7 @@ class CartManagerMongo {
   async addProductToCart(cid, pid) {
     try {
       const cart = await this.model.findById(cid);
-      const product = await productModel.findById(pid);
+      const product = await productModels.findById(pid);
 
       if (!cart) {
         throw new Error('Carrito no encontrado');
@@ -133,7 +133,7 @@ class CartManagerMongo {
 
   async updateProductQuantity(cartId, productId, newQuantity) {
     try {
-      const cart = await Cart.findById(cartId);
+      const cart = await cart.findById(cartId);
 
       if (!cart) {
         throw new Error('Carrito no encontrado');

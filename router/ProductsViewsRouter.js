@@ -5,37 +5,87 @@ const productsViewsRouter = Router()
 const productModels = require('../dao/models/productModels');;
 const Handlebars = require('handlebars');
 
-Handlebars.registerHelper('buildPaginationLink', (page, currentUrl) => {
-  const queryParams = new URLSearchParams(currentUrl.split('?')[1]);
-  queryParams.set('page', page);
-  return `${currentUrl.split('?')[0]}?${queryParams.toString()}`;
+Handlebars.registerHelper('ifCond', function(v1, operator, v2, options) {
+  switch (operator) {
+    case '===':
+      return v1 === v2 ? options.fn(this) : options.inverse(this);
+    case '!==':
+      return v1 !== v2 ? options.fn(this) : options.inverse(this);
+    case '<':
+      return v1 < v2 ? options.fn(this) : options.inverse(this);
+    case '<=':
+      return v1 <= v2 ? options.fn(this) : options.inverse(this);
+    case '>':
+      return v1 > v2 ? options.fn(this) : options.inverse(this);
+    case '>=':
+      return v1 >= v2 ? options.fn(this) : options.inverse(this);
+    default:
+      return options.inverse(this);
+  }
+});
+Handlebars.registerHelper('buildPaginationLink', (param, value, currentUrl) => {
+  if (currentUrl && typeof currentUrl === 'string') {
+    const queryParams = new URLSearchParams(currentUrl.split('?')[1]);
+    queryParams.set(param, value);
+    
+    return `${currentUrl.split('?')[0]}?${queryParams.toString()}`;
+  } else {
+    console.log('Error: currentUrl no está definido o no es una cadena.');
+    return currentUrl; 
+  }
 });
 
+Handlebars.registerHelper('buildFilterUrl', (currentUrl, filters) => {
+  if (typeof currentUrl !== 'string') {
+    console.log('Error: currentUrl no está definido o no es una cadena.');
+    return currentUrl;
+  }
 
-//const USE_MONGO_DB = require('../config/config');
-//const productManager = USE_MONGO_DB ? new ProductManagerMongo() : new ProductManagerFile();
-productsViewsRouter.get('/', async (req, res) => {
+  const currentParams = new URLSearchParams(currentUrl.split('?')[1] || '');
+
+  for (const param in filters) {
+    const value = filters[param];
+    if (value !== undefined && value !== '') {
+      currentParams.set(param, value);
+    } else {
+      currentParams.delete(param);
+    }
+  }
+
+  return `${currentUrl.split('?')[0]}?${currentParams.toString()}`;
+});
+
+// const USE_MONGO_DB = require('../config/config');
+// const productManager = USE_MONGO_DB ? new ProductManagerMongo() : new ProductManagerFile();
+
+productsViewsRouter.get("/", async (req, res) => {
+  
+
   const page = req.query.page || 1;
   const limit = req.query.limit || 10;
-  const sort = req.query.sort || '';
-  const category = req.query.category || '';
-  const stock = req.query.stock || '';
+  const sort = req.query.sort || "";
+  const category = req.query.category || "";
+  const stock = req.query.stock || "";
 
   const query = {};
 
   if (category) {
-    query.category = { $regex: category, $options: 'i' };
+    query.category = { $regex: category, $options: "i" };
   }
 
-  if (stock !== '') {
-    query.stock = parseInt(stock);
+  if (stock !== "") {
+    if (stock === "+6") {
+      query.stock = { $gt: 6 };
+    } else {
+      query.stock = parseInt(stock);
+    }
   }
 
   let sortQuery = {};
 
-  if (sort === 'asc') {
+  if (sort === "asc") {
     sortQuery = { price: 1 };
-  } else if (sort === 'desc') {
+  } else if (sort === "desc") {
     sortQuery = { price: -1 };
   }
 
@@ -49,12 +99,13 @@ productsViewsRouter.get('/', async (req, res) => {
     const products = await productModels.paginate(query, options);
     const allCategories = await productModels.distinct("category");
     const selectedCategory = category;
+
     const categoriesWithSelection = allCategories.map((cat) => ({
       category: cat,
       isSelected: cat === selectedCategory,
     }));
-    
-    console.log("products:", products);
+
+    console.log("Products:", products);
     console.log(products.totalPages)
     products.docs = products.docs.map((product) => product.toObject());
 
@@ -65,7 +116,21 @@ productsViewsRouter.get('/', async (req, res) => {
       pages.push(i);
     }
 
-    return res.render("products", { products, user, showHeader: true, pages, categoriesWithSelection});
+    const currentUrl = req.originalUrl;
+
+    return res.render("products", {
+  products,
+  user,
+  showHeader: true,
+  pages,
+  categoriesWithSelection,
+  requestUrl: currentUrl,
+  // Pasar todos los filtros actuales aquí
+  limit: limit,
+  category: category,
+  stock: stock,
+  sort: sort,
+});
   } catch (error) {
     console.error("Error:", error);
     return res
@@ -75,16 +140,3 @@ productsViewsRouter.get('/', async (req, res) => {
 });
 
 module.exports = productsViewsRouter;
-
-
-
-
-
-//   const products = await productModel.paginate({ }, options);
-//   console.log(products)
-
-//   products.docs = products.docs.map(product => product.toObject())
-
-// return res.render('products', products)
-
-module.exports = productsViewsRouter
