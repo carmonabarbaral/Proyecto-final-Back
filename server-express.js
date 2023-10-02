@@ -1,20 +1,23 @@
 const express = require('express')
-
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
+
+const jwt = require('express-jwt');
 
 const FileStore = require('session-file-store')
 const MongoStore = require('connect-mongo')
 
 const productsRouter = require("./router/products-router");
 const productViewRouter = require("./router/ProductsViewsRouter");
-const cartRouter = require("./router/cart-router");
+const cartRouter = require ('./router/cart-router')
 const cartViewRouter = require("./router/cartViewRouter");
 const sessionRouter = require('./router/sessionRouter')
 const sessionViewRouter = require('./router/sessionViewRouter')
 const messageRouter = require("./router/messenger-router");
 const mongoose = require("mongoose");
 const handlebars = require("express-handlebars");
+const jwtMiddleware = require('./middleware/jwtMiddleware');
+const authorizationMiddleware= require("./middleware/authMiddleware");
 
 const app = express();
 
@@ -26,7 +29,6 @@ const passport = require('./config/initializePassport');
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
-
 
 
 app.use(cookieParser('secretkey'))
@@ -53,14 +55,16 @@ app.use(session({
   saveUninitialized: true
 }))
 
-
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(authorizationMiddleware());
+
 
 app.use("/api/products", productsRouter);
 app.use("/products", productViewRouter);
 app.use("/api/carts", cartRouter);
 app.use("/cart", cartViewRouter);
+app.use('/api/current', jwtMiddleware);
 app.use('/api/sessions', sessionRouter)
 app.use('/sessions', sessionViewRouter)
 app.use("/api/messages", messageRouter);
@@ -77,3 +81,4 @@ app.get("/", (req, res) => {
 
 const PORT = `${config.url.port}`;
 app.listen(PORT, () => console.log(`servidor corriendo en puerto ${PORT}`));
+

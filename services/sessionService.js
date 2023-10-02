@@ -26,7 +26,7 @@ async function createUser (userData) {
 async function updatePassword(email, newPassword) {
     try {
         const hashedPassword = createHash(newPassword)
-        await userModel.updateOne({email: email}, {password: hashedPassword})
+        await userModels.updateOne({email: email}, {password: hashedPassword})
     } catch (error) {
         console.error(error)
         throw new Error('Error while updating password')

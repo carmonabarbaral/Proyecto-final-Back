@@ -1,26 +1,29 @@
-const LocalStrategy = require('passport-local').Strategy
-const userModels = require('../dao/models/userModels')
-const {isValidPassword} = require('../utils/passwordHash')
+const jwt = require('jsonwebtoken');
+const userModels = require('../dao/models/userModels');
+const { isValidPassword } = require('../utils/passwordHash');
+const roles = require('../config/roles');
 
-    module.exports = new LocalStrategy(
-        {usernameField: 'email'},
-        async (email, password, done) => {
-            try {
-                let user = await userModels.findOne({email: email})
-                if (!user) {
-                    console.log('Usuario existente')
-                    return done(null, false)
-                }
-                if(!isValidPassword(password, user.password)) {
-                    console.log('Los datos son incorrectos')
-                    return done(null, false)
-                }
-                user = user.toObject();
-                delete user.password;
-                done(null, user)
-            } catch (e) {
-                return done(e)
-            }
+module.exports = async (email, password) => {
+    try {
+        const user = await userModels.findOne({ email: email });
+
+        if (!user || !isValidPassword(password, user.password)) {
+            return null; // Autenticación fallida
         }
-    );
-                
+
+        // Genera un JWT con la información del usuario
+        const payload = {
+            userId: user._id,
+            email: user.email,
+            // Puedes incluir otros datos relevantes aquí
+            role: user.role,
+        };
+
+        // Crea y firma el JWT
+        const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+
+        return token; // Devuelve el JWT al cliente
+    } catch (error) {
+        throw error;
+    }
+};
