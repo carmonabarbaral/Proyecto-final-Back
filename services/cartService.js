@@ -68,7 +68,7 @@ async function updateProductQuantity(cid, pid, quantity) {
         console.error(error);
         throw new Error('Error al actualizar la cantidad del producto');
     }
-}
+      }
 
 module.exports = {
     getCart,
@@ -77,5 +77,4 @@ module.exports = {
     addProductToCart,
     removeProductFromCart,
     updateCart,
-    updateProductQuantity
-}
+    updateProductQuantity}

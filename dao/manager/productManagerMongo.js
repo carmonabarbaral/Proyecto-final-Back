@@ -63,7 +63,18 @@ class ProductManagerMongo {
 
         return true
     }
+    async getProductStock(id) {
+        const product = await this.getProductById(id)
+        return product.stock
+    }
 
+    async updateProductStock(id, quantity) {
+        const product = await this.getProductById(id)
+        product.stock -= quantity
+        await this.model.updateOne({ _id: id }, product)
+    }
 }
+
+
 
 module.exports = ProductManagerMongo

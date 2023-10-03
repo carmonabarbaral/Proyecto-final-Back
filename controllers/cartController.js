@@ -1,4 +1,5 @@
-const cartService = require('../services/cartService');;
+const cartService = require('../services/cartService');
+const ticketService = require('../services/ticketService');
 
 async function getCart(req, res) {
     try {
@@ -79,6 +80,43 @@ async function updateProductQuantity(req, res) {
         console.error(error);
     res.status(500).json({ error: 'Error al actualizar el carrito' });
     }
+    async function purchaseCart(req, res) {
+        // Obtener el carrito del usuario
+        const cart = await cartService.getCartById(req.params.cid);
+      
+        // Verificar el stock de los productos en el carrito
+        const productsWithStock = [];
+        const productsWithoutStock = [];
+        for (const product of cart.products) {
+          const productStock = await productService.getProductStock(product.id);
+          if (productStock >= product.quantity) {
+            productsWithStock.push(product);
+          } else {
+            productsWithoutStock.push(product);
+          }
+        }
+      
+        // Generar un ticket de compra
+        const ticket = await ticketService.createTicket(cart.total, req.user.id);
+      
+        // Restar el stock de los productos comprados
+        for (const product of productsWithStock) {
+          await productService.updateProductStock(product.id, product.quantity);
+        }
+      
+        // Filtrar los productos del carrito
+        cart.products = productsWithoutStock;
+      
+        // Guardar los cambios en el carrito
+        await cartService.updateCart(cart);
+      
+        // Devolver una respuesta al usuario
+        res.json({
+          ticketId: ticket.id,
+          productsWithoutStock: productsWithoutStock.map(product => product.id),
+        });
+      }
+
 }
 
 module.exports = {
@@ -88,5 +126,6 @@ module.exports = {
     addProductToCart,
     removeProductFromCart,
     updateCart,
-    updateProductQuantity
+    updateProductQuantity,
+    purchaseCart
 }
