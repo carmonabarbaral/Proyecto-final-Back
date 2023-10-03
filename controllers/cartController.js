@@ -116,7 +116,6 @@ async function updateProductQuantity(req, res) {
           productsWithoutStock: productsWithoutStock.map(product => product.id),
         });
       }
-
 }
 
 module.exports = {
