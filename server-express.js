@@ -17,7 +17,8 @@ const messageRouter = require("./router/messenger-router");
 const mongoose = require("mongoose");
 const handlebars = require("express-handlebars");
 const jwtMiddleware = require('./middleware/jwtMiddleware');
-const authorizationMiddleware= require("./middleware/authMiddleware");
+const mockingProducts = require('./mocking/mocking');
+const errorHandler = require ('./middleware/errorHandler');
 
 const app = express();
 
@@ -42,6 +43,7 @@ mongoose
   .then(() => console.log("conexion DB"))
   .catch((error) => console.log(error));
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -57,8 +59,7 @@ app.use(session({
 
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(authorizationMiddleware());
-
+app.use(errorHandler ());
 
 app.use("/api/products", productsRouter);
 app.use("/products", productViewRouter);
@@ -71,6 +72,8 @@ app.use("/api/messages", messageRouter);
 app.use("/messages/new", (req, res) =>
   res.render("messageForm", { message: {} })
 );
+
+
 app.use("/messages/edit/:id", messageRouter);
 
 app.get("/", (req, res) => {
@@ -78,6 +81,13 @@ app.get("/", (req, res) => {
     status: "running",
   });
 });
+
+app.get('/mockingProducts', (req, res) => {
+  res.json(mockingProducts);
+});
+
+
+
 
 const PORT = `${config.url.port}`;
 app.listen(PORT, () => console.log(`servidor corriendo en puerto ${PORT}`));

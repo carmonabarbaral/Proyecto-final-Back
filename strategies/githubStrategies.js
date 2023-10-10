@@ -50,7 +50,7 @@ module.exports = new GitHubStrategy(
 
       // Generamos un JWT y lo devolvemos al cliente
       const token = jwt.sign({ userId: newUser._id }, config.jwtSecret, {
-        expiresIn: '1h', // Puedes configurar la duración del token según tus necesidades
+        expiresIn: '1h', 
       });
 
       return done(null, { token }); // Devolvemos el token al cliente

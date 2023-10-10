@@ -5,7 +5,7 @@ const AuthorizationMiddleware = () => {
     return async (req, res, next) => {
         // Verifica si el encabezado 'authorization' está presente
         if (!req.headers['authorization']) {
-            return res.status(401).send('Token de autorización no proporcionado');
+        return res.status(401).send('Token de autorización no proporcionado');
         }
 
         // Valida el token JWT
