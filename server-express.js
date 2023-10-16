@@ -7,7 +7,6 @@ const jwt = require('express-jwt');
 const FileStore = require('session-file-store')
 const MongoStore = require('connect-mongo')
 
-const productsRouter = require("./router/products-router");
 const productViewRouter = require("./router/ProductsViewsRouter");
 const cartRouter = require ('./router/cart-router')
 const cartViewRouter = require("./router/cartViewRouter");
@@ -17,8 +16,10 @@ const messageRouter = require("./router/messenger-router");
 const mongoose = require("mongoose");
 const handlebars = require("express-handlebars");
 const jwtMiddleware = require('./middleware/jwtMiddleware');
-const mockingProducts = require('./mocking/mocking');
+const productsMockers = require('./mocking/mocking');
 const errorHandler = require ('./middleware/errorHandler');
+const logger = require('./utils/loggers');
+
 
 const app = express();
 
@@ -72,6 +73,7 @@ app.use("/api/messages", messageRouter);
 app.use("/messages/new", (req, res) =>
   res.render("messageForm", { message: {} })
 );
+app.use ("/api/loggerTest");
 
 
 app.use("/messages/edit/:id", messageRouter);
@@ -83,7 +85,7 @@ app.get("/", (req, res) => {
 });
 
 app.get('/mockingProducts', (req, res) => {
-  res.json(mockingProducts);
+  res.json(productsMockers);
 });
 
 

@@ -4,9 +4,13 @@ const faker = require('@faker-js/faker');
 const productsMockers = [];
 
 for (let i = 0; i < 100; i++) {
-  products.push({
-    id: i,
-    name: faker.commerce.productName(),
+  // Generar un producto mockeado
+  const product = faker.commerce.product();
+
+  // Agregar el producto mockeado a la lista de productos mockeados
+  productsMockers.push({
+    id: product.id,
+    name: product.name,
     description: faker.lorem.paragraph(),
     price: Math.floor(Math.random() * 990) + 10,
   });

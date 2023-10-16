@@ -1,14 +1,17 @@
 const ProductManagerMongo = require('../dao/manager/productManagerMongo')
 const ProductManagerFile = require('../dao/manager/productManagerfs');
 const USE_MONGO_DB = require('../config/config');
+const logger = require('../utils/loggers');
 const productManager = USE_MONGO_DB ? new ProductManagerMongo() : new ProductManagerFile();
 
 async function getAllProducts() {
+    logger.info('Recibida una petición GET a /products');
     try {
         const products = await productManager.getAllProducts()
         return products;
+        
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         throw new Error('Error al obtener los productos');
     }
 }
