@@ -1,4 +1,4 @@
-const faker = require('@faker-js/faker');
+const {faker} = require ('@faker-js/faker');
 
 // Generar los productos mockeados
 const productsMockers = [];

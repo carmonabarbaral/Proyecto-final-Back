@@ -18,7 +18,7 @@ const handlebars = require("express-handlebars");
 const jwtMiddleware = require('./middleware/jwtMiddleware');
 const productsMockers = require('./mocking/mocking');
 const errorHandler = require ('./middleware/errorHandler');
-const logger = require('./utils/loggers');
+const loggers = require('./utils/loggers');
 
 
 const app = express();
