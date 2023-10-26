@@ -6,6 +6,10 @@ const productsSchema = mongoose.Schema({
         type:String,
         unique:true
     },
+     // Nuevo campo
+    owner: {
+    type: String,
+  },
     stock:Number,
     title:String,
     price:Number,

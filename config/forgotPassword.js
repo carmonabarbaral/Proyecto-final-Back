@@ -1,8 +1,19 @@
-const passport = require('passport')
-const registerStrategy = require('../strategies/registerStrategy')
-const loginStrategy = require('../strategies/localStrategy')
-const githubStrategy = require('../strategies/githubStrategies')
-const userModels = require('../dao/models/userModels')
+const passport = require('passport');
+const registerStrategy = require('../strategies/registerStrategy');
+const loginStrategy = require('../strategies/localStrategy');
+const githubStrategy = require('../strategies/githubStrategies');
+const userModels = require('../dao/models/userModels');
+
+// Nueva variable para almacenar el objeto de opciones de correo electrónico
+const mailOptions = {
+  from: process.env.EMAIL_USER,
+  to: email,
+  subject: 'Restablecimiento de contraseña',
+  text: `
+    <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+    <a href="http://localhost:3000/reset-password?token=${token}">Restablecer contraseña</a>
+  `,
+};
 
 const forgotPassword = async (email: string) => {
   // Validar que el correo electrónico sea válido
@@ -30,16 +41,6 @@ const forgotPassword = async (email: string) => {
     },
   });
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Restablecimiento de contraseña',
-    text: `
-      <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-      <a href="http://localhost:3000/reset-password?token=${token}">Restablecer contraseña</a>
-    `,
-  };
-
   await transporter.sendMail(mailOptions);
 
   console.log('Enlace temporal enviado');
@@ -54,4 +55,4 @@ const generateResetPasswordLink = async (email: string) => {
   )}`;
 };
 
-module.exports = { forgotPassword };
+module.exports =  forgotPassword;

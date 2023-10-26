@@ -19,6 +19,7 @@ const jwtMiddleware = require('./middleware/jwtMiddleware');
 const productsMockers = require('./mocking/mocking');
 const errorHandler = require ('./middleware/errorHandler');
 const loggers = require('./utils/loggers');
+const forgotPassword = require('./config/forgotPassword');
 
 
 const app = express();
@@ -74,7 +75,7 @@ app.use("/messages/new", (req, res) =>
   res.render("messageForm", { message: {} })
 );
 app.use ("/api/loggerTest");
-
+app.use ("/api/forgot-password");
 
 app.use("/messages/edit/:id", messageRouter);
 
@@ -88,8 +89,30 @@ app.get('/mockingProducts', (req, res) => {
   res.json(productsMockers);
 });
 
+app.get('/loggerTest', (req, res) => {
+  logger.debug('Este es un mensaje de debug.');
+  logger.info('Este es un mensaje de información.');
+  logger.warn('Este es un mensaje de advertencia.');
+  logger.error('Este es un mensaje de error.');
+  logger.fatal('Este es un mensaje fatal.');
 
+  res.send('Todos los logs se han enviado correctamente.');
+});
+app.post('/api/forgot-password', async (req, res) => {
+  const { email } = req.body;
 
+  try {
+    await forgotPassword(email);
+
+    res.json({
+      message: 'Se envió un enlace de restablecimiento de contraseña a tu correo electrónico.',
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: error.message,
+    });
+  }
+});
 
 const PORT = `${config.url.port}`;
 app.listen(PORT, () => console.log(`servidor corriendo en puerto ${PORT}`));

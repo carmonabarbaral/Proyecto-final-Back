@@ -1,4 +1,4 @@
-const winston = require('winston')
+const winston = require('winston');
 
 const logger = winston.createLogger({
   levels: {
@@ -20,14 +20,6 @@ const logger = winston.createLogger({
   ],
 });
 
-app.get('/loggerTest', (req, res) => {
-    logger.debug('Este es un mensaje de debug.');
-    logger.info('Este es un mensaje de información.');
-    logger.warn('Este es un mensaje de advertencia.');
-    logger.error('Este es un mensaje de error.');
-    logger.fatal('Este es un mensaje fatal.');
-  
-    res.send('Todos los logs se han enviado correctamente.');
-  });
+
 
 module.exports = logger;

@@ -27,34 +27,62 @@ async function getProductById(pid) {
 }
 
 async function addProduct(body) {
+    // Verificar que el usuario tenga el rol premium
     try {
-        const product = await productManager.addProduct(body)
-        return product;
+      if (!req.user.premium) {
+        throw new Error('No tienes permiso para crear productos');
+      }
     } catch (error) {
-        console.error(error);
-        throw new Error('Error al agregar el producto');
+      return res.status(403).json({ error });
     }
-}
-
-async function updateProduct(pid, body) {
+  
+    // Agregar el producto
+    const product = await productManager.addProduct(body);
+  
+    return product;
+  }
+  
+  // Método updateProduct()
+  
+  async function updateProduct(pid, body) {
+    // Obtener el producto
+    const product = await productManager.getProductById(pid);
+  
+    // Verificar que el usuario sea el propietario del producto o que tenga el rol admin
     try {
-        const product = await productManager.updateProduct(pid, body)
-        return product;
+      if (product.owner !== req.user.email && !req.user.admin) {
+        throw new Error('No tienes permiso para modificar este producto');
+      }
     } catch (error) {
-        console.error(error);
-        throw new Error('Error al actualizar el producto');
+      return res.status(403).json({ error });
     }
-}
-
-async function deleteProduct(pid) {
+  
+    // Modificar el producto
+    const updatedProduct = await productManager.updateProduct(pid, body);
+  
+    return updatedProduct;
+  }
+  
+  // Método deleteProduct()
+  
+  async function deleteProduct(pid) {
+    // Obtener el producto
+    const product = await productManager.getProductById(pid);
+  
+    // Verificar que el usuario sea el propietario del producto o que tenga el rol admin
     try {
-        const product = await productManager.deleteProduct(pid)
-        return product;
+      if (product.owner !== req.user.email && !req.user.admin) {
+        throw new Error('No tienes permiso para eliminar este producto');
+      }
     } catch (error) {
-        console.error(error);
-        throw new Error('Error al eliminar el producto');
+      return res.status(403).json({ error });
     }
-}
+  
+    // Eliminar el producto
+    await productManager.deleteProduct(pid);
+  
+    return;
+  }
 
 module.exports = {
     getAllProducts,

@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const userModels = require('../dao/models/userModels');
 const { isValidPassword } = require('../utils/passwordHash');
-const forgotPassword = ('../config/forgotPassword')
-const roles = require('../config/roles');
+const { forgotPassword } = require('./forgot-password');
+
 
 
 module.exports = async (email, password, link) => {
