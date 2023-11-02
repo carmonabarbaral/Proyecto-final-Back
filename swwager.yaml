@@ -1,0 +1,63 @@
+swagger: '2.0'
+
+info:
+  title: Mi API
+  version: 1.0.0
+
+paths:
+  /products:
+    get:
+      operationId: getProducts
+      summary: Obtiene una lista de productos.
+      parameters:
+        - name: page
+          in: query
+          description: La página de productos a devolver.
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: El número de productos a devolver por página.
+          required: false
+          type: integer
+      responses:
+        200:
+          description: Lista de productos.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+  /cart:
+    get:
+      operationId: getCart
+      summary: Obtiene el carrito de un usuario.
+      parameters:
+        - name: id
+          in: path
+          description: El ID del usuario.
+          required: true
+          type: integer
+      responses:
+        200:
+          description: El carrito del usuario.
+          schema:
+            $ref: '#/definitions/Cart'
+    addProduct:
+      operationId: addProductToCart
+      summary: Añade un producto al carrito de un usuario.
+      parameters:
+        - name: id
+          in: path
+          description: El ID del usuario.
+          required: true
+          type: integer
+        - name: productId
+          in: query
+          description: El ID del producto a añadir al carrito.
+          required: true
+          type: integer
+      responses:
+        200:
+          description: El carrito del usuario actualizado.
+          schema:
+            $ref: '#/definitions/Cart'

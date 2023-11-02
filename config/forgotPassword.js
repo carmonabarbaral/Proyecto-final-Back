@@ -15,7 +15,7 @@ const mailOptions = {
   `,
 };
 
-const forgotPassword = async (email: string) => {
+const forgotPassword = async (email) => {
   // Validar que el correo electrónico sea válido
   if (!isValidEmail(email)) {
     throw new Error('El correo electrónico no es válido');
@@ -23,6 +23,11 @@ const forgotPassword = async (email: string) => {
 
   // Generar un enlace temporal
   const token = await generateResetPasswordLink(email);
+
+  // Validar que el token de restablecimiento de contraseña sea válido
+  if (!isValidToken(token)) {
+    throw new Error('El token de restablecimiento de contraseña no es válido');
+  }
 
   // Actualizar la fecha de expiración del token en la base de datos
   const user = await userModels.findOne({ email });
@@ -41,18 +46,12 @@ const forgotPassword = async (email: string) => {
     },
   });
 
-  await transporter.sendMail(mailOptions);
-
-  console.log('Enlace temporal enviado');
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Restablecimiento de contraseña',
+    text: 'Ingresa tu nueva contraseña',
+  });
 };
 
-// Función para generar el enlace temporal
-const generateResetPasswordLink = async (email: string) => {
-  const expiresAt = new Date(Date.now() + 3600 * 1000); // 1 hora
-
-  return `http://localhost:3000/reset-password?token=${btoa(
-    JSON.stringify({ email, expiresAt })
-  )}`;
-};
-
-module.exports =  forgotPassword;
+module.exports = forgotPassword;

@@ -6,6 +6,8 @@ const jwt = require('express-jwt');
 
 const FileStore = require('session-file-store')
 const MongoStore = require('connect-mongo')
+const swaggerUIExpress = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
 
 const productViewRouter = require("./router/ProductsViewsRouter");
 const cartRouter = require ('./router/cart-router')
@@ -20,6 +22,7 @@ const productsMockers = require('./mocking/mocking');
 const errorHandler = require ('./middleware/errorHandler');
 const loggers = require('./utils/loggers');
 const forgotPassword = require('./config/forgotPassword');
+
 
 
 const app = express();
@@ -46,8 +49,20 @@ mongoose
   .catch((error) => console.log(error));
 
 
+  const options = {
+    swaggerDefinition: {
+      info: {
+        title: 'Mi API',
+        version: '1.0.0',
+      },
+    },
+    apis: ['./router/productsRouter.js', './router/cartRouter.js'],
+  };
+  
+  // Llama a la función `swaggerJSDoc` y pasa la variable `options` como argumento
+  const specs = swaggerJSDoc(options);
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }))
 app.use(express.static("public"));
 app.use(session({
   store: MongoStore.create({
@@ -62,6 +77,9 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(errorHandler ());
+app.use(swaggerJSDoc.ui);
+app.use(swaggerJSDoc.json(specs));
+
 
 app.use("/api/products", productsRouter);
 app.use("/products", productViewRouter);
@@ -78,6 +96,7 @@ app.use ("/api/loggerTest");
 app.use ("/api/forgot-password");
 
 app.use("/messages/edit/:id", messageRouter);
+app.use('/api-docs', swaggerUIExpress.serve, swaggerUIExpress.setup(swagger));
 
 app.get("/", (req, res) => {
   res.json({
