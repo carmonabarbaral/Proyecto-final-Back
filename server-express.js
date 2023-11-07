@@ -21,7 +21,7 @@ const jwtMiddleware = require('./middleware/jwtMiddleware');
 const productsMockers = require('./mocking/mocking');
 const errorHandler = require ('./middleware/errorHandler');
 const loggers = require('./utils/loggers');
-const forgotPassword = require('./config/forgotPassword');
+const forgotPassword = require('./config/forgot-Password');
 
 
 

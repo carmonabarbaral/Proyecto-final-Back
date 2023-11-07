@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userModels = require('../dao/models/userModels');
 const { isValidPassword } = require('../utils/passwordHash');
-const { forgotPassword } = require('./forgot-password');
+const {forgotPassword}= require('../config/forgot-Password');
 
 
 

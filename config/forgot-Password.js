@@ -4,7 +4,6 @@ const loginStrategy = require('../strategies/localStrategy');
 const githubStrategy = require('../strategies/githubStrategies');
 const userModels = require('../dao/models/userModels');
 
-// Nueva variable para almacenar el objeto de opciones de correo electrónico
 const mailOptions = {
   from: process.env.EMAIL_USER,
   to: email,
@@ -46,12 +45,7 @@ const forgotPassword = async (email) => {
     },
   });
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Restablecimiento de contraseña',
-    text: 'Ingresa tu nueva contraseña',
-  });
+  await transporter.sendMail(mailOptions);
 };
 
 module.exports = forgotPassword;

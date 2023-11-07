@@ -4,8 +4,9 @@ const errorHandler = (err, req, res, next) => {
   // Aquí puedes personalizar el manejo de errores en función del tipo de error.
   // Por ejemplo, puedes usar el diccionario de errores para manejar los errores de manera específica.
 
-  const statusCode = err.statusCode || 500;
-  const message = errorCodes[err.code] || err.message;
+  const type = err.type;
+  const statusCode = errorCodes[type] || 500;
+  const message = errorCodes[type] || err.message;
 
   res.status(statusCode).json({
     message,
