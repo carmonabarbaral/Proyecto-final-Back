@@ -35,8 +35,6 @@ const passport = require('./config/initializePassport');
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
-
-
 app.use(cookieParser('secretkey'))
 
 const config = require('./config/config')
@@ -60,7 +58,7 @@ mongoose
   };
   
   // Llama a la función `swaggerJSDoc` y pasa la variable `options` como argumento
-  const specs = swaggerJSDoc(options);
+const specs = swaggerJSDoc(options);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static("public"));
@@ -76,7 +74,8 @@ app.use(session({
 
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(errorHandler ());
+app.use(errorHandler.CustomError);
+app.use(errorHandler.defaultErrorHandler);
 app.use(swaggerJSDoc.ui);
 app.use(swaggerJSDoc.json(specs));
 

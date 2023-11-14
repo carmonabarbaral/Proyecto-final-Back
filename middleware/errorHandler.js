@@ -1,14 +1,29 @@
-const errorCodes = require('../config/errorCodes');
+const errorCodes = require ('../error/errorCodes');
+const customsErrors = require ('../error/customsErrors');
 
-const errorHandler = (err, req, res, next) => {
-  // ...
-  if (res && res.status) {
-    // El objeto res existe y tiene una propiedad status
-    res.status(500).send('Error desconocido');
-  } else {
-    // El objeto res no existe o no tiene una propiedad status
-    res.send('Error desconocido');
-  }
+
+const errorHandlers = {
+  // Manejador de errores para la clase CustomError
+  CustomError: (err, req, res, next) => {
+    const { code, message } = err;
+    res.status(code).send({
+      error: {
+        code,
+        message,
+      },
+    });
+  },
+
+  // Manejador de errores para cualquier otro error
+  defaultErrorHandler: (err, req, res, next) => {
+    const { code = 500, message = 'Error desconocido' } = err;
+    res.status(code).send({
+      error: {
+        code,
+        message,
+      },
+    });
+  },
 };
 
-module.exports = errorHandler;
+module.exports = errorHandlers;
