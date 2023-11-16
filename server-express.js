@@ -10,6 +10,7 @@ const swaggerUIExpress = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
 
 const productViewRouter = require("./router/ProductsViewsRouter");
+const ProductsRouter = require("./router/products-router");
 const cartRouter = require ('./router/cart-router')
 const cartViewRouter = require("./router/cartViewRouter");
 const sessionRouter = require('./router/sessionRouter')
@@ -20,7 +21,7 @@ const handlebars = require("express-handlebars");
 const jwtMiddleware = require('./middleware/jwtMiddleware');
 const productsMockers = require('./mocking/mocking');
 const errorHandler = require ('./middleware/errorHandler');
-const loggers = require('./utils/loggers');
+const logger = require('./utils/loggers');
 const forgotPassword = require('./config/forgot-Password');
 
 
@@ -37,7 +38,7 @@ app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
 app.use(cookieParser('secretkey'))
 
-const config = require('./config/config')
+const config = require('./config/config');
 
 const MONGODB_CONNECT =
   `mongodb+srv://${config.mongo.user}:${config.mongo.password}@cluster0.zy5f7e6.mongodb.net/${config.mongo.name}retryWrites=true&w=majority`;
@@ -76,11 +77,10 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(errorHandler.CustomError);
 app.use(errorHandler.defaultErrorHandler);
-app.use(swaggerJSDoc.ui);
-app.use(swaggerJSDoc.json(specs));
+app.use(logger)
 
 
-app.use("/api/products", productsRouter);
+app.use("/api/products",ProductsRouter);
 app.use("/products", productViewRouter);
 app.use("/api/carts", cartRouter);
 app.use("/cart", cartViewRouter);

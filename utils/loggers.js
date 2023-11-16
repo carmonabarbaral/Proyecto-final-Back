@@ -1,25 +1,49 @@
-const winston = require('winston');
+const winston = require("winston");
+
+const customLevels = {
+  levels: {
+    fatal: 0,
+    error: 1,
+    warning: 2,
+    info: 3,
+    http: 4,
+    debug: 5,
+  },
+  colors: {
+    fatal: "red",
+    error: "yellow",
+    warning: "orange",
+    info: "green",
+    http: "blue",
+    debug: "white",
+  },
+};
 
 const logger = winston.createLogger({
-  levels: {
-    debug: 0,
-    http: 1,
-    info: 2,
-    warning: 3,
-    error: 4,
-    fatal: 5,
-  },
+  levels: customLevels.levels,
   transports: [
     new winston.transports.Console({
-      level: 'debug',
+      level: "http",
+      format: winston.format.combine(
+        winston.format.colorize({ colors: customLevels.colors }),
+        winston.format.simple()
+      ),
     }),
     new winston.transports.File({
-      level: 'error',
-      filename: 'errors.log',
+      filename: "error.log",
+      level: "warning",
+      format: winston.format.simple(),
     }),
   ],
 });
 
+module.exports = addLogger = (req, res, next) => {
+  req.logger = logger;
+  req.logger.http(
+    `${req.method} en ${req.url} - ${new Date().toLocaleString()}`
+  );
+  next();
+};
 
 
-module.exports = logger;
+
