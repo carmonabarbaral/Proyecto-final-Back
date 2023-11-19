@@ -8,7 +8,8 @@ const FileStore = require('session-file-store')
 const MongoStore = require('connect-mongo')
 const swaggerUIExpress = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
-
+const fs = require("fs");
+const swagger = fs.readFileSync("./swagger.yaml", "utf8");
 const productViewRouter = require("./router/ProductsViewsRouter");
 const ProductsRouter = require("./router/products-router");
 const cartRouter = require ('./router/cart-router')
@@ -91,8 +92,35 @@ app.use("/api/messages", messageRouter);
 app.use("/messages/new", (req, res) =>
   res.render("messageForm", { message: {} })
 );
-app.use ("/api/loggerTest");
-app.use ("/api/forgot-password");
+app.use("/api/loggerTest", (req, res) => {
+  app.get('/loggerTest', (req, res) => {
+    logger.debug('Este es un mensaje de debug.');
+    logger.info('Este es un mensaje de información.');
+    logger.warn('Este es un mensaje de advertencia.');
+    logger.error('Este es un mensaje de error.');
+    logger.fatal('Este es un mensaje fatal.');
+  
+    res.send('Todos los logs se han enviado correctamente.');
+  });
+});
+
+app.use("/api/forgot-password", async (req, res) => {
+  app.post('/api/forgot-password', async (req, res) => {
+    const { email } = req.body;
+  
+    try {
+      await forgotPassword(email);
+  
+      res.json({
+        message: 'Se envió un enlace de restablecimiento de contraseña a tu correo electrónico.',
+      });
+    } catch (error) {
+      res.status(400).json({
+        error: error.message,
+      });
+    }
+  });
+});
 
 app.use("/messages/edit/:id", messageRouter);
 app.use('/api-docs', swaggerUIExpress.serve, swaggerUIExpress.setup(swagger));
@@ -107,30 +135,8 @@ app.get('/mockingProducts', (req, res) => {
   res.json(productsMockers);
 });
 
-app.get('/loggerTest', (req, res) => {
-  logger.debug('Este es un mensaje de debug.');
-  logger.info('Este es un mensaje de información.');
-  logger.warn('Este es un mensaje de advertencia.');
-  logger.error('Este es un mensaje de error.');
-  logger.fatal('Este es un mensaje fatal.');
 
-  res.send('Todos los logs se han enviado correctamente.');
-});
-app.post('/api/forgot-password', async (req, res) => {
-  const { email } = req.body;
 
-  try {
-    await forgotPassword(email);
-
-    res.json({
-      message: 'Se envió un enlace de restablecimiento de contraseña a tu correo electrónico.',
-    });
-  } catch (error) {
-    res.status(400).json({
-      error: error.message,
-    });
-  }
-});
 
 const PORT = `${config.url.port}`;
 app.listen(PORT, () => console.log(`servidor corriendo en puerto ${PORT}`));
