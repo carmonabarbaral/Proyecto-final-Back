@@ -20,14 +20,19 @@ async function githubAuthCallback(req, res) {
 async function register(req, res) {
     const body = req.body;
     body.password = createHash(body.password);
-    console.log('Solicitud de registro recibida');
-    console.log({ body });
-
-    if (req.query.client === 'view') {
-        return res.redirect('/sessions/login');
-    }
-    return res.redirect('/sessions/login');
-}
+  
+    const user = new userModels(body);
+    await user.save();
+  
+    // Actualizar la propiedad last_connection
+    user.last_connection = Date.now();
+    await user.save();
+  
+    req.login(user, (err) => {
+      if (err) return next(err);
+      res.json({ message: 'Usuario registrado exitosamente' });
+    });
+  }
 
 function failRegister(req, res) {
     return res.json({
@@ -35,25 +40,30 @@ function failRegister(req, res) {
     });
 }
 
-async function login(req, res) {    
+async function login(req, res) {
     let user = await userModels.findOne({ email: req.body.email });
     if (!user) {
-        return res.status(401).json({
-            error: 'El usuario no existe en el sistema',
-        });
+      return res.status(401).json({
+        error: 'El usuario no existe en el sistema',
+      });
     }
-    if (!isValidPassword(req.body.password, user.password)) { // Corrige el orden de los argumentos
-        return res.status(401).json({
-            error: 'Contraseña incorrecta',
-        });
+    if (!isValidPassword(req.body.password, user.password)) {
+      return res.status(401).json({
+        error: 'Contraseña incorrecta',
+      });
     }
+  
     user = user.toObject();
     delete user.password;
-
+  
     req.session.user = user;
-
+  
+    // Actualizar la propiedad last_connection
+    user.last_connection = Date.now();
+    await user.save();
+  
     return res.json(user);
-}
+  }
 
 function failLogin(req, res) {
     return res.json({
@@ -79,7 +89,7 @@ async function recoveryPassword (req, res) {
     }
 
     const newPassword = createHash(req.body.password)
-    await userModel.updateOne({email: req.body.email}, {password: newPassword})
+    await userModels.updateOne({email: req.body.email}, {password: newPassword})
 
     return res.redirect('/login')
 }

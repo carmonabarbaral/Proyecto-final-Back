@@ -1,14 +1,18 @@
 const express = require('express')
 const userModels = require ('../dao/models/userModels')
+const handleSession = require('../middleware/sessionMiddleware');
 
 const sessionViewRouter = express.Router()
 
 const sessionMiddleware = (req, res, next) => {
-    if(req.session.user){
-        return  res.redirect('profile')
-    }
-    return next()
-}
+  if (req.session.user) {
+    // El usuario está conectado, redireccionar al perfil
+    return res.redirect('profile');
+  } else {
+    // El usuario no está conectado, continuar con la siguiente ruta
+    return next();
+  }
+};
 
 const adminMiddleware = async (req, res, next) => {
     if (req.session.user && req.session.user.admin) {
@@ -31,16 +35,18 @@ sessionViewRouter.get('/login', sessionMiddleware, (req, res) => {
 })
 
 sessionViewRouter.get('/profile', (req, res, next) => {
-    if (!req.session.user) {
-      return res.redirect('login', { showHeader: true })
-    }
-  
-    return next()
-  }, (req, res) => {
-    const user = req.session.user
-    return res.render('profile', { user, showHeader: true })
-  })
+  if (!req.session.user) {
+    return res.redirect('login', { showHeader: true });
+  }
 
+  // Actualizar la propiedad last_connection
+  const user = req.session.user;
+  user.last_connection = Date.now();
+  user.save();
+
+  // Renderizar la página de perfil
+  return res.render('profile', { user, showHeader: true });
+});
 
 module.exports = sessionViewRouter
 

@@ -1,26 +1,26 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose');
 
 const userSchema = new Schema({
-  name: String,
-  lastName: String,
+  name: { type: String, required: true },
+  lastName: { type: String, required: true },
   email: {
     type: String,
     required: true,
     unique: true,
   },
-  age: Number,
-  password: String,
-  createdAt: Date,
-  // Nuevo campo
+  age: { type: Number },
+  password: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+
+  // New property
   role: {
     type: String,
-    enum: ["admin", "premium", "user"],
-    default: "admin",
+    enum: ['admin', 'premium', 'user'],
+    default: 'user',
   },
-  // Campo existente
-  expirationDate: {
-    type: Date,
-  },
+
+  // Existing field
+  expirationDate: { type: Date },
 });
 
 module.exports = model('users', userSchema);

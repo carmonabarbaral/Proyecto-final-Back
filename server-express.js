@@ -74,12 +74,13 @@ app.use(session({
   saveUninitialized: true
 }))
 
+
+
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(errorHandler.CustomError);
 app.use(errorHandler.defaultErrorHandler);
 app.use(logger)
-
 
 app.use("/api/products",ProductsRouter);
 app.use("/products", productViewRouter);
@@ -129,6 +130,12 @@ app.get("/", (req, res) => {
   res.json({
     status: "running",
   });
+});
+
+app.get('/failRegister', (req, res) => {
+  // Muestra un mensaje de error personalizado al usuario
+
+  res.render('failRegister');
 });
 
 app.get('/mockingProducts', (req, res) => {
