@@ -24,6 +24,8 @@ const productsMockers = require('./mocking/mocking');
 const errorHandler = require ('./middleware/errorHandler');
 const logger = require('./utils/loggers');
 const forgotPassword = require('./config/forgot-Password');
+const documentsRouter = require('./router/document-router');
+
 
 
 
@@ -125,7 +127,7 @@ app.use("/api/forgot-password", async (req, res) => {
 
 app.use("/messages/edit/:id", messageRouter);
 app.use('/api-docs', swaggerUIExpress.serve, swaggerUIExpress.setup(swagger));
-
+app.use('/api/documents', documentsRouter);
 app.get("/", (req, res) => {
   res.json({
     status: "running",
