@@ -22,7 +22,7 @@ async function register(req, res) {
     body.password = createHash(body.password);
   
     const user = new userModels(body);
-    await user.save();
+    //await user.save();
   
     // Actualizar la propiedad last_connection
     user.last_connection = Date.now();

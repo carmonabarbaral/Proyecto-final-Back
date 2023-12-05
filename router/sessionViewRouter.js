@@ -1,6 +1,7 @@
 const express = require('express')
 const userModels = require ('../dao/models/userModels')
 const handleSession = require('../middleware/sessionMiddleware');
+const multer = require('multer');
 
 const sessionViewRouter = express.Router()
 

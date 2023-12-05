@@ -23,7 +23,7 @@ const jwtMiddleware = require('./middleware/jwtMiddleware');
 const productsMockers = require('./mocking/mocking');
 const errorHandler = require ('./middleware/errorHandler');
 const logger = require('./utils/loggers');
-const forgotPassword = require('./config/forgot-Password');
+const forgotPasswordRouter = require('./router/forgot-router');
 const documentsRouter = require('./router/document-router');
 
 
@@ -107,23 +107,7 @@ app.use("/api/loggerTest", (req, res) => {
   });
 });
 
-app.use("/api/forgot-password", async (req, res) => {
-  app.post('/api/forgot-password', async (req, res) => {
-    const { email } = req.body;
-  
-    try {
-      await forgotPassword(email);
-  
-      res.json({
-        message: 'Se envió un enlace de restablecimiento de contraseña a tu correo electrónico.',
-      });
-    } catch (error) {
-      res.status(400).json({
-        error: error.message,
-      });
-    }
-  });
-});
+app.use("/api/forgot-password",forgotPasswordRouter);
 
 app.use("/messages/edit/:id", messageRouter);
 app.use('/api-docs', swaggerUIExpress.serve, swaggerUIExpress.setup(swagger));

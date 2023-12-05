@@ -1,5 +1,17 @@
 const nodemailer = require('nodemailer');
 
+const isValidEmail = async (email) => {
+  // Validar que el correo electrónico sea una cadena de caracteres
+  if (typeof email !== 'string') {
+    throw new Error('El correo electrónico debe ser una cadena de caracteres');
+  }
+
+  // ... Validar que la dirección de correo electrónico contenga un símbolo @
+  const result = await email.includes('@');
+
+  return result;
+};
+
 const forgotPassword = async (email) => {
   // Validar que el correo electrónico sea válido
   if (!isValidEmail(email)) {

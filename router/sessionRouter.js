@@ -6,7 +6,7 @@ const sessionController = require('../controllers/sessionControllers');
 const sessionRouter = express.Router();
 
 sessionRouter.post('/register', passport.authenticate('register', { failureRedirect: '/failRegister' }), sessionController.register);
-sessionRouter.post('/login', passport.authenticate('login', { failureRedirect: '/failLogin' }), sessionController.login);
+sessionRouter.post('/login', passport.authenticate('local', { failureRedirect: '/failLogin' }), sessionController.login);
 sessionRouter.get('/logout', sessionController.logout);
 sessionRouter.post('/logout', sessionController.logout);
 sessionRouter.post('/recovery-password', sessionController.recoveryPassword);

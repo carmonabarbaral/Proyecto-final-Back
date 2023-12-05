@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userModels = require('../dao/models/userModels');
 const { isValidPassword } = require('../utils/passwordHash');
-const {forgotPassword}= require('../config/forgot-Password');
+const { forgotPassword } = require('../config/forgot-Password');
 
 // Función para verificar el enlace temporal
 const verifyResetPasswordLink = (link) => {
@@ -32,21 +32,21 @@ const generateSecureResetPasswordLink = async () => {
   return token;
 };
 
-module.exports = async (email, password, link) => {
+module.exports = async (email, password, link, done) => {
   try {
     if (link) {
       // Verificar el enlace temporal
       const isValidLink = verifyResetPasswordLink(link);
 
       if (!isValidLink) {
-        return null; // Enlace temporal inválido
+        return done(null, false);
       }
 
       // Buscar al usuario por correo electrónico
       const user = await userModels.findOne({ email: decoded.email });
 
       if (!user) {
-        return null; // Usuario no encontrado
+        return done(null, false);
       }
 
       // Impedir que el usuario restablezca la contraseña con la misma contraseña que tenía anteriormente
@@ -56,13 +56,13 @@ module.exports = async (email, password, link) => {
       user.password = password;
       await user.save();
 
-      return true; // Contraseña restablecida correctamente
+      return done(null, user); // Contraseña restablecida correctamente
     } else {
       // Autenticación normal
       const user = await userModels.findOne({ email: email });
 
       if (!user || !isValidPassword(password, user.password)) {
-        return null; // Autenticación fallida
+        return done(null, false);
       }
 
       // Genera un JWT con la información del usuario
@@ -76,9 +76,9 @@ module.exports = async (email, password, link) => {
       // Crea y firma el JWT
       const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
 
-      return token; // Devuelve el JWT al cliente
+      return done(null, user, token); // Devuelve el usuario y el JWT al cliente
     }
   } catch (error) {
-    throw error;
+    return done(error);
   }
 };

@@ -14,12 +14,12 @@ async function findUserByEmail (email) {
 async function createUser (userData) {
     try {
         userData.password = createHash(userData.password)
-        const newUser = await userModels.create(userData)
-        return newUser
+      const newUser = await userModels.create(userData)
+       return newUser
     }
-    catch (error) {
-        console.error(error)
-        throw new Error('Error while creating user')
+       catch (error) {
+       console.error(error)
+       throw new Error('Error while creating user')
     }
 }
 
