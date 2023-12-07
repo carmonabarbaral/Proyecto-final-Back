@@ -9,6 +9,7 @@ passport.use('local', localStrategy)
 passport.use('github', githubStrategy)
 
 
+
 passport.serializeUser((user, done) => {
     console.log('Serialize called')
     done(null, user._id)

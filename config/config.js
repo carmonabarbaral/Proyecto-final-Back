@@ -8,6 +8,7 @@ module.exports = {
     },
     session: {
         secret: process.env.SECRET_KEY,
+        secretOrPrivateKey: process.env.JWT_SECRET,
     },
     github: {   
         clientID: process.env.GITHUB_CLIENT_ID,

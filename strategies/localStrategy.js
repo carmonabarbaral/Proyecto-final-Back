@@ -1,84 +1,45 @@
+const LocalStrategy = require('passport-local').Strategy;
+const { createHash, isValidPassword  } = require('../utils/passwordHash');
 const jwt = require('jsonwebtoken');
+const Cart = require('../dao/models/cartModels');
 const userModels = require('../dao/models/userModels');
-const { isValidPassword } = require('../utils/passwordHash');
-const { forgotPassword } = require('../config/forgot-Password');
+const sessions = require('../config/config.js'); // Importar el archivo de configuración
 
-// Función para verificar el enlace temporal
-const verifyResetPasswordLink = (link) => {
-  const decoded = JSON.parse(atob(link.split('?')[1]));
-
-  if (!decoded || decoded.expiresAt < Date.now()) {
-    return false; // Enlace temporal inválido
-  }
-
-  return true;
-};
-
-// Función para impedir que los usuarios restablezcan la contraseña con la misma contraseña que tenían anteriormente
-const preventSamePasswordReset = (user, newPassword) => {
-  if (newPassword === user.password) {
-    throw new Error('No puedes restablecer la contraseña con la misma contraseña que tenías anteriormente');
-  }
-};
-
-// Función para generar un hash seguro para el enlace temporal
-const generateSecureResetPasswordLink = async () => {
-  // Generar un hash aleatorio
-  const hash = await crypto.randomBytes(32);
-
-  // Convertir el hash a un string
-  const token = hash.toString('hex');
-
-  return token;
-};
-
-module.exports = async (email, password, link, done) => {
-  try {
-    if (link) {
-      // Verificar el enlace temporal
-      const isValidLink = verifyResetPasswordLink(link);
-
-      if (!isValidLink) {
-        return done(null, false);
-      }
-
+module.exports = new LocalStrategy(
+  { passReqToCallback: true, usernameField: 'email' },
+  async (req, username, password, done) => {
+    try {
       // Buscar al usuario por correo electrónico
-      const user = await userModels.findOne({ email: decoded.email });
+      const user = await userModels.findOne({ email: username });
 
       if (!user) {
-        return done(null, false);
+        return done(null, false); // Usuario no encontrado
       }
 
-      // Impedir que el usuario restablezca la contraseña con la misma contraseña que tenía anteriormente
-      preventSamePasswordReset(user, password);
-
-      // Actualizar la contraseña del usuario
-      user.password = password;
-      await user.save();
-
-      return done(null, user); // Contraseña restablecida correctamente
-    } else {
-      // Autenticación normal
-      const user = await userModels.findOne({ email: email });
-
-      if (!user || !isValidPassword(password, user.password)) {
-        return done(null, false);
+      // Verificar la contraseña
+      if (!isValidPassword(password, user.password)) {
+        return done(null, false); // Contraseña incorrecta
       }
 
-      // Genera un JWT con la información del usuario
+      // Crear el token JWT
       const payload = {
         userId: user._id,
-        email: user.email,
-        // Puedes incluir otros datos relevantes aquí
-        role: user.role,
+        exp: Date.now() + 1000 * 60 * 60 // 1 hora
       };
 
-      // Crea y firma el JWT
-      const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+      const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
 
-      return done(null, user, token); // Devuelve el usuario y el JWT al cliente
+      // Agregar el token al objeto `req`
+      req.token = token;
+
+      // Retornar el usuario y el token
+      return done(null, user, { token });
+    } catch (error) {
+      return done(error); // Manejar el error
     }
-  } catch (error) {
-    return done(error);
   }
-};
+);

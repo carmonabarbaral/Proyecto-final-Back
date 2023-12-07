@@ -1,4 +1,3 @@
-// jwtMiddleware.js
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
@@ -28,3 +27,5 @@ const jwtMiddleware = (req, res, next) => {
 };
 
 module.exports = jwtMiddleware;
+
+

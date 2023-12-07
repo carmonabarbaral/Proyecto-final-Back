@@ -1,11 +1,8 @@
-const passport = require('passport')
-const local = require ('passport-local')
+const LocalStrategy = require('passport-local').Strategy;
 const {createHash} = require('../utils/passwordHash');
 const Cart = require('../dao/models/cartModels');
 const userModels = require('../dao/models/userModels');
 
-
-const LocalStrategy = local.Strategy
 module.exports = new LocalStrategy(
     { passReqToCallback: true, usernameField: 'email' },
     async (req, username, password, done) => {

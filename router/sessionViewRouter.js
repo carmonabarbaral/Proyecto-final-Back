@@ -34,7 +34,9 @@ sessionViewRouter.get('/register', sessionMiddleware, (req, res)=> {
 sessionViewRouter.get('/login', sessionMiddleware, (req, res) => {
     return res.render('login', { showHeader: false })
 })
-
+sessionViewRouter.get('/failLogin', (req, res) => {
+   return res.render('failLogin');
+});
 sessionViewRouter.get('/profile', (req, res, next) => {
   if (!req.session.user) {
     return res.redirect('login', { showHeader: true });
