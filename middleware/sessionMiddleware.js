@@ -1,5 +1,5 @@
 const sessionMiddleware = async (req, res, next) => {
-  if (req.session.user) {
+  if (req.headers) {
     // El usuario está conectado, permitir que la solicitud continúe
     await next();
   } else {

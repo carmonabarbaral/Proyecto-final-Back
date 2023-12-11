@@ -1,8 +1,8 @@
 const GitHubStrategy = require('passport-github2');
-const userModels = require('../dao/models/userModels');
-const Cart = require('../dao/models/cartModels');
+const userModels = require('../src/dao/models/userModels');
+const Cart = require('../src/dao/models/cartModels');
 const jwt = require('jsonwebtoken');
-const config = require('../config/config');
+const config = require('../src/config/config');
 
 module.exports = new GitHubStrategy(
   {

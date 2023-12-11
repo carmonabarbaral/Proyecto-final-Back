@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const config = require('../config/config');
+const config = require('../src/config/config');
+
 
 const jwtMiddleware = (req, res, next) => {
   // Obtén el token del encabezado de la solicitud

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cart Details</title>
+</head>
+<body>
+  <h1>Cart</h1>
+  {{#if cart}}
+  <table id="carrito">
+    <tr>
+      <th>Codigo</th>
+      <th>Nombre</th>
+      <th>Precio</th>
+      <th>Cantidad</th>
+    </tr>
+    {{#each cart.products}}
+      <tr>
+        <td>{{this.product.code}}</td>
+        <td>{{this.product.title}}</td>
+        <td>{{this.product.price}}</td>
+        <td>{{this.quantity}}</td>
+      </tr>
+    {{/each}}
+  </table>
+  {{else}}
+    <p>No hay productos en el carrito</p>
+  {{/if}}
+  <a href="/products?page={{nextPage}}&limit={{limit}}">Agregar mas productos</a>
+</body>
+</html>

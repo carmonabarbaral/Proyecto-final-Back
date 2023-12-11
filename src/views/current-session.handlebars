@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Current Session</title>
+</head>
+<body>
+    <h1>Información de la Sesión Actual</h1>
+    
+    {{#if user}}
+        <p>Nombre: {{user.name}}</p>
+        <p>Apellido: {{user.lastName}}</p>
+        <p>Correo Electrónico: {{user.email}}</p>
+        <p>Edad: {{user.age}}</p>
+        <p>Rol: {{user.role}}</p>
+        {{#if user.cartId}}
+            <p>ID del Carrito: {{user.cartId}}</p>
+        {{/if}}
+        {{#if user.admin}}
+            <p>Administrador</p>
+        {{else}}
+            <p>No es administrador</p>
+        {{/if}}
+        <a href="/logout">Cerrar Sesión</a>
+    {{else}}
+        <p>No has iniciado sesión. Por favor, <a href="/login">inicia sesión</a>.</p>
+    {{/if}}
+</body>
+</html>

@@ -2,7 +2,6 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 
-const jwt = require('express-jwt');
 
 const FileStore = require('session-file-store')
 const MongoStore = require('connect-mongo')
@@ -10,21 +9,21 @@ const swaggerUIExpress = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
 const fs = require("fs");
 const swagger = fs.readFileSync("./swagger.yaml", "utf8");
-const productViewRouter = require("./router/ProductsViewsRouter");
-const ProductsRouter = require("./router/products-router");
-const cartRouter = require ('./router/cart-router')
-const cartViewRouter = require("./router/cartViewRouter");
-const sessionRouter = require('./router/sessionRouter')
-const sessionViewRouter = require('./router/sessionViewRouter')
-const messageRouter = require("./router/messenger-router");
+const productViewRouter = require("./src/router/ProductsViewsRouter");
+const ProductsRouter = require("./src/router/products-router");
+const cartRouter = require ('./src/router/cart-router')
+const cartViewRouter = require('./src/router/cartViewRouter');
+const sessionRouter = require('./src/router/sessionRouter')
+//const sessionViewRouter = require('./src/router/sessionViewRouter')
+const messageRouter = require("./src/router/messenger-router");
 const mongoose = require("mongoose");
 const handlebars = require("express-handlebars");
 const jwtMiddleware = require('./middleware/jwtMiddleware');
-const productsMockers = require('./mocking/mocking');
-const errorHandler = require ('./middleware/errorHandler');
+const productsMockers = require('./src/mocking/mocking');
+//const errorHandler = require ('./middleware/errorHandler');
 const logger = require('./utils/loggers');
-const forgotPasswordRouter = require('./router/forgot-router');
-const documentsRouter = require('./router/document-router');
+const forgotPasswordRouter = require('./src/router/forgot-router');
+const documentsRouter = require('./src/router/document-router');
 
 
 
@@ -33,16 +32,16 @@ const app = express();
 
 const fileStorage = FileStore(session)
 
-const passport = require('./config/initializePassport');
+const passport = require('./src/config/passport-config');
 
 // Configuración handlebars
-app.engine("handlebars", handlebars.engine());
-app.set("views", __dirname + "/views");
-app.set("view engine", "handlebars");
+app.set('view engine', 'handlebars');
+app.set('views', '../../views');
+
 app.use(cookieParser('secretkey'))
 
 
-const config = require('./config/config');
+const config = require('./src/config/config');
 
 const MONGODB_CONNECT =
   `mongodb+srv://${config.mongo.user}:${config.mongo.password}@cluster0.zy5f7e6.mongodb.net/${config.mongo.name}retryWrites=true&w=majority`;
@@ -81,8 +80,8 @@ app.use(session({
 
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(errorHandler.CustomError);
-app.use(errorHandler.defaultErrorHandler);
+//app.use(errorHandler.CustomError);
+//app.use(errorHandler.defaultErrorHandler);
 app.use(logger)
 
 app.use("/api/products",ProductsRouter);
@@ -91,7 +90,7 @@ app.use("/api/carts", cartRouter);
 app.use("/cart", cartViewRouter);
 app.use('/api/current', jwtMiddleware);
 app.use('/api/sessions', sessionRouter)
-app.use('/sessions', sessionViewRouter)
+//app.use('/sessions', sessionViewRouter)
 app.use("/api/messages", messageRouter);
 app.use("/messages/new", (req, res) =>
   res.render("messageForm", { message: {} })
