@@ -129,6 +129,79 @@ sessionRouter.get('/current', async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
+  
+});
+sessionRouter.post("/reset-password", async (req, res) => {
+  const { email } = req.body;
+  const isFromView = req.body.isFromView;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const resetToken = jwt.sign({ userId: user._id }, env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordTokenExp = Date.now() + 3600000;
+    console.log("Token almacenado en el usuario:", user.resetPasswordToken);
+    await user.save();
+    await sendPasswordResetMail(email, resetToken);
+    if (isFromView) {
+      return res.status(200).json({ message: "Email sent" });
+    }
+    return res.redirect("/sessions/login");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+sessionRouter.post("/reset-password/:resetToken", async (req, res) => {
+  const { resetToken } = req.params;
+  const { newPassword, confirmPassword } = req.body;
+  const isFromView = req.body.isFromView;
+
+  try {
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords don't match" });
+    }
+    const decodedToken = decodeURIComponent(resetToken);
+    const { userId } = jwt.verify(decodedToken, );
+
+    const user = await User.findOne({
+      _id: userId,
+      resetPasswordToken: resetToken,
+      resetPasswordTokenExp: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      if (isFromView) {
+        return res.status(404).json({ message: "Invalid or expired token" });
+      }
+      return res.render("reset-password-form", {
+        resetToken,
+        error: "Invalid or expired token", // Mensaje de error
+      });
+    }
+
+    // Si el token es válido y no ha expirado, se actualiza la contraseña
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordTokenExp = undefined;
+    await user.save();
+
+    if (isFromView) {
+      return res.status(200).json({ message: "Password updated" });
+    }
+
+    return res.redirect("/sessions/login");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
 });
 
 module.exports = sessionRouter;

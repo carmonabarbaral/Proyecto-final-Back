@@ -6,7 +6,6 @@ const path = require('path');
 
 const handlebars = require("express-handlebars");
 const exphbs = require('express-handlebars').engine;
-require ('./src/config/config')
 const FileStore = require('session-file-store')
 const MongoStore = require('connect-mongo')
 const swaggerUIExpress = require('swagger-ui-express');
@@ -64,7 +63,7 @@ app.engine(
     engine: "handlebars",
   })
 );
-app.engine('handlebars', exphbs());
+//app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set("views", path.join(__dirname, "src", "views"));
 //app.set('views', './views');
@@ -99,7 +98,7 @@ mongoose
 const specs = swaggerJSDoc(options);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static("public"));
+//app.use(express.static("public"));
 app.use(session({
   store: MongoStore.create({
     mongoUrl: MONGODB_CONNECT,
