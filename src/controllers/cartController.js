@@ -1,5 +1,5 @@
 const cartService = require('../services/cartService');
-//const ticketService = require('../services/ticketService');
+const ticketService = require('../services/TicketService');
 
 const getAllCarts = async (req, res) => {
     try {
@@ -65,7 +65,48 @@ const getAllCarts = async (req, res) => {
       res.status(500).json({ message: err.message });
     }
   };
+  const purchaseCart = async (req, res) => {
+    try {
+      const cid = req.params.cid;
+      const cart = await cartService.getCartById(cid);
   
+      if (!cart) {
+        return res.status(404).json({ message: "Cart not found" });
+      }
+  
+      // Validar stock
+      const products = cart.products;
+      for (const product of products) {
+        const productData = await productService.findById(product.productId);
+        if (productData.stock < product.quantity) {
+          return res.status(400).send("No hay suficiente stock del producto");
+        }
+      }
+  
+      // Crear ticket
+      const ticketData = {
+        code: uuid.v4(),
+        purchase_datatime: new Date(),
+        amount: cart.total,
+        purchaser: cart.user,
+      };
+      const ticket = await ticketService.create(ticketData);
+  
+      // Restar stock
+      for (const product of products) {
+        const productData = await productService.findById(product.productId);
+        productData.stock -= product.quantity;
+        await productService.update(productData);
+      }
+  
+      // Eliminar carrito
+      await cartService.delete(cid);
+  
+      res.status(201).json({ ticket });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
   module.exports = {
     getAllCarts,
     getCartById,
@@ -73,4 +114,5 @@ const getAllCarts = async (req, res) => {
     updateCart,
     deleteCart,
     addProductToCart,
+    purchaseCart,
   };

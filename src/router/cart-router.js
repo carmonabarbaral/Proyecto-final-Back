@@ -8,5 +8,6 @@ cartRouter.post('/', cartController.createCart);
 cartRouter.put('/:id', cartController.updateCart);
 cartRouter.delete('/:id', cartController.deleteCart);
 cartRouter.post('/:id/products/:pid', cartController.addProductToCart);
+cartRouter.post("/:cid/purchase", cartController.purchaseCart);
 
 module.exports = cartRouter;

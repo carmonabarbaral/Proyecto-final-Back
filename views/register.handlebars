@@ -1,12 +1,47 @@
-<h2>Registro</h2>
-<form action="/api/sessions/register" method="POST">
-  <!-- Otros campos de registro (nombre, correo electrónico, contraseña, etc.) -->
-  <label for="admin">¿Eres administrador?</label>
-  <select id="admin" name="admin">
-    <option value="true">Sí</option>
-    <option value="false">No</option>
-  </select>
-  <br><br>
-  <input type="submit" value="Registrarse">
+<form action="/api/sessions/register" method="POST"></form>
+    <p class="title">Register </p>
+    <p class="message">Signup now and get full access to our app. </p>
+        <div class="flex">
+        <label>
+            <input required="" placeholder="Name" type="Name" class="input">
+            <span>Name</span>
+        </label>
+
+        <label>
+            <input required="" placeholder="LastName" type="LastName" class="input">
+            <span>LastName</span>
+        </label>
+    </div>  
+            
+    <label>
+      <label>
+            <input required="" placeholder="Age" type="Age" class="input">
+            <span>Age</span>
+        </label>
+    </div>  
+            
+    <label>
+       <label>
+            <input required="" placeholder="role" type="role" class="input">
+            <span>Role</span>
+        </label>
+    </div>  
+            
+    <label>
+        <input required="" placeholder="Email" type="Email" class="input">
+        <span>Email</span>
+    </label> 
+        
+    <label>
+        <input required="" placeholder="Password" type="Password" class="input">
+        <span>Password</span>
+    </label>
+    <label>
+        <input required="" placeholder="Confirm password" type="Confirm password" class="input">
+        <span>Confirm password</span>
+    </label>
+    <button class="submit">Submit</button>
+    <p class="signin">Already have an acount ? <a href="#">Signin</a> </p>
 </form>
 
+ <script type="module" src="../../middleware/token.cookie.js"></script>

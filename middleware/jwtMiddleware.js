@@ -1,32 +1,24 @@
-const jwt = require('jsonwebtoken');
-const config = require('../src/config/config');
+const jwt = require('jsonwebtoken')
+const env = require('../src/config/config')
 
-
-const jwtMiddleware = (req, res, next) => {
-  // Obtén el token del encabezado de la solicitud
-  const token = req.header('Authorization');
-
-  // Verifica si el token está presente
+function verifyAccessToken(req, res, next) {
+  const token = req.cookies.token;
   if (!token) {
-    return res.status(401).json({ error: 'Acceso no autorizado. Token no proporcionado.' });
+req.userAuth = false;
+    return next();
   }
 
-  try {
-    // Verifica y decodifica el token
-    const decoded = jwt.verify(token, config.jwtSecret);
 
-    // Agrega la información decodificada del usuario a la solicitud para su posterior uso
-    req.user = decoded;
-
-    // Continúa con el siguiente middleware o la ruta
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      // En caso de error al verificar el token, redirige a la página de inicio de sesión
+      req.userAuth = false;
+      return next();
+    }
+    req.userAuth = true;
     next();
-  } catch (error) {
-    // Maneja el error si el token no es válido
-    console.error('Error de verificación de JWT:', error);
-    return res.status(401).json({ error: 'Acceso no autorizado. Token no válido.' });
-  }
-};
+    
+  });
+}
 
-module.exports = jwtMiddleware;
-
-
+module.exports = verifyAccessToken

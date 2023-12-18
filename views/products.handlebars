@@ -1,98 +1,115 @@
-<h4>Página: {{products.page}} de {{products.totalPages}}</h4>
+ {{> header}}
 
-<div style="display: flex">
-  <a
-    href="/products?page={{products.page}}&limit=10&sort={{products.sort}}&category={{products.category}}&stock={{products.stock}}"
-  >10 por página</a>
-  <a
-    href="/products?page={{products.page}}&limit=20&sort={{products.sort}}&category={{products.category}}&stock={{products.stock}}"
-  >20 por página</a>
-  <a
-    href="/products?page={{products.page}}&limit=50&sort={{products.sort}}&category={{products.category}}&stock={{products.stock}}"
-  >50 por página</a>
-</div>
-<form action="/products" method="GET">
-  <select name="category" onchange="this.form.submit()">
-    <option value="">Todas las categorías</option>
-    {{#each categoriesWithSelection}}
-      <option value="{{category}}" {{#if isSelected}}selected{{/if}}>{{category}}</option>
-    {{/each}}
-  </select>
-</form>
 
-<form action="/products" method="GET">
-  <select name="stock" onchange="this.form.submit()">
-    <option value="">Todos los niveles de stock</option>
-    <option value="1">1 unidad</option>
-    <option value="2">2 unidades</option>
-    <option value="3">3 unidades</option>
-    <option value="4">4 unidades</option>
-    <option value="5">5 unidades</option>
-    <option value="+6">+6 unidades</option>
-  </select>
-</form>
-
-<div class="d-flex flex-row justify-content-end align-items-center gap-3">
-  <p class="m-0">Ordenar por:</p>
-  <select class="form-select w-auto" onchange="location = this.value;">
-    <option value="../products">Precio</option>
-  <option value="../products?sort=asc">Menor precio</option>
-  <option value="../products?sort=desc">Mayor precio</option>
-</select>
-</div>
-
-<!-- Agregar formulario para filtrar por stock -->
-<form action="./products.handlebars" method="get">
-  <input type="hidden" name="page" value="{{products.page}}" />
-  <input type="hidden" name="limit" value="{{products.limit}}" />
-  <input type="hidden" name="sort" value="{{products.sort}}" />
-  <input type="hidden" name="category" value="{{products.category}}" />
-  <input
-    type="number"
-    name="stock"
-    placeholder="Filtrar por stock"
-    value="{{products.stock}}"
-  />
-  <button type="submit">Filtrar</button>
-</form>
-
-<div class="product-container">
-  {{#each products.docs}}
-    <div class="card">
-      <img src="..." class="card-img-top" alt="..." />
-      <div class="card-body">
-        <h5 class="card-title">{{this.title}}</h5>
-        <p class="card-text">{{this.description}}</p>
-        <p class="card-text">${{this.price}}</p>
-        <a href="#" class="btn btn-primary">Agregar al carrito</a>
-      </div>
+  <form class="form-filters-products" action="/products" method="GET">
+    <!-- Select para ordenar por precio -->
+    <div>
+      <label for="sort">Order:</label>
+    <select class="select" name="sort" id="sort">
+      <option value="asc" {{#if (eq sort 'asc' )}}selected{{/if}}>Lower price</option>
+      <option value="desc" {{#if (eq sort 'desc' )}}selected{{/if}}>Higher price</option>
+    </select>
     </div>
-  {{/each}}
-</div>
-
-<nav aria-label="Page navigation example ">
-    <ul class="pagination d-flex justify-content-center">
-      {{#if products.hasPrevPage}}
-        <li class="page-item">
-          <a class="page-link" href="./products.handlebars">Anterior</a>
-        </li>
-      {{/if}}
-
-      {{#each pages}}
-        <li class="page-item">
-          <a class="page-link" href="./products.handlebars">{{this}}</a>
-        </li>
-      {{/each}}
-
-      {{#if products.hasNextPage}}
-        <li class="page-item">
-          <a class="page-link" href="./products.handlebars">Siguiente</a>
-        </li>
-      {{/if}}
-    </ul>
-  </nav>
-    <script src='../../public/js/socket.io.js'></script>
-    <script src='../../public/js/products.js'></script>
     
-  </body>
-</html>
+  
+    <!-- Select para filtrar por categoría -->
+    <div>
+      <label for="categoryFilter">Categories:</label>
+    <select class="select" name="categoryFilter" id="categoryFilter">
+      <option value="">Alls</option>
+      {{#each categories}}
+        <option value="{{this}}" {{#if (eq this ../categoryFilter)}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+    </div>
+    
+  
+    <!-- Select para filtrar por stock -->
+    <div>
+      <label for="stock">Stock:</label>
+      <select class="select" name="stock" id="stock">
+        <option value="">Alls</option>
+        <option value="1" {{#if (eq stock '1' )}}selected{{/if}}>1</option>
+        <option value="2" {{#if (eq stock '2' )}}selected{{/if}}>2</option>
+        <option value="3" {{#if (eq stock '3' )}}selected{{/if}}>3</option>
+        <option value="4" {{#if (eq stock '4' )}}selected{{/if}}>4</option>
+        <option value="5" {{#if (eq stock '5' )}}selected{{/if}}>5</option><option value="+6" {{#if (eq stock '+6' )}}selected{{/if}}>+6</option>
+        <!-- Añade más opciones según sea necesario -->
+      </select>
+    </div>
+    
+  
+    <!-- Select para mostrar cantidad de productos -->
+    <div>
+      <select class="select" name="limit" id="limit">
+        <option value="10" {{#if (eq limit '10' )}}selected{{/if}}>10</option>
+        <option value="20" {{#if (eq limit '20' )}}selected{{/if}}>20</option>
+        <option value="30" {{#if (eq limit '30' )}}selected{{/if}}>30</option>
+        <!-- Añade más opciones según sea necesario -->
+      </select>
+    </div>
+    <div class="buttons-filters">
+      <a href="/products">Clean filters</a>
+      <button class="button" type="submit" style="vertical-align:middle"><span>Apply</span></button>
+    </div>
+  
+  </form>
+  
+  <!-- Lista de productos -->
+    {{#if products}}
+    <div class="card-container">
+  {{#each products}}
+  
+          <div class="card">
+  
+   <div class="image"></div>
+    <div class="content">
+      <a href="#">
+        <span class="title">
+          {{this.title}}
+        </span>
+      </a>
+  
+      <p class="desc">
+        {{this.description}}
+      </p>
+      <p>
+        {{this.price}}
+      </p>
+  
+      <a class="action" href="/products/{{this._id}}">
+        Details
+        <span aria-hidden="true">
+          →
+        </span>
+      </a>
+      <form action="/api/carts/{{this.cart}}/products/{{this.id}}" method="POST">
+        <label for="quantity">Cantidad:</label>
+        <input type="number" name="quantity" id="quantity" value="1" min="1">
+        <button type="submit">Agregar al carrito</button>
+      </form>
+    </div>
+  </div>
+        {{/each}}
+    </div>
+        
+    {{else}}
+      <p>No hay productos disponibles.</p>
+    {{/if}}
+
+  
+  <!-- Paginación -->
+  {{#if totalPages}}
+    <div>
+      {{#if (gt totalPages 1)}}
+        <span>Página {{currentPage}} de {{totalPages}}</span>
+        {{#if (lt currentPage totalPages)}}
+          <a href="?page={{inc currentPage}}&sort={{sort}}&categoryFilter={{categoryFilter}}&stock={{stock}}&limit={{limit}}">Siguiente</a>
+        {{/if}}
+        {{#if (gt currentPage 1)}}
+          <a href="?page={{dec currentPage}}&sort={{sort}}&categoryFilter={{categoryFilter}}&stock={{stock}}&limit={{limit}}">Anterior</a>
+        {{/if}}
+      {{/if}}
+    </div>
+  {{/if}}
+  

@@ -3,9 +3,11 @@ const LocalStrategy = require("passport-local").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const passportJwt = require("passport-jwt"); 
 const User = require("../models/users.model");
 const env = require("./config");
 const Cart = require("../models/cart.model");
+
 
 passport.use(
   "login",
@@ -93,9 +95,9 @@ passport.use(
   "github",
   new GitHubStrategy(
     {
-      clientID: `${env.github.clientID}`,
-      clientSecret: `${env.github.clientSecret}`,
-      callbackURL: `${env.github.callbackURL}`,
+      clientID: `${env.GITHUB_CLIENT_ID}`,
+      clientSecret: `${env.GITHUB_CLIENT_SECRET}`,
+      callbackURL: `${env.GITHUB_CALLBACK_URL}`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -140,3 +142,4 @@ passport.deserializeUser(function (id, done) {
 });
 
 module.exports = passport;
+

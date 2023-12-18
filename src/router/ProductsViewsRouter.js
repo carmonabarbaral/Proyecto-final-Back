@@ -1,141 +1,93 @@
-const {Router} = require('express')
-const productsViewsRouter = Router()
-const productsModel = require('../models/product.model');;
-const Handlebars = require('handlebars');
+const express = require('express');
+const productViewRouter = express.Router();
+const Products = require('../models/product.model');
+const env = require("../config/config");
+const jwt = require("jsonwebtoken");
 
 
-Handlebars.registerHelper('ifCond', function(v1, operator, v2, options) {
-  switch (operator) {
-    case '===':
-      return v1 === v2 ? options.fn(this) : options.inverse(this);
-    case '!==':
-      return v1 !== v2 ? options.fn(this) : options.inverse(this);
-    case '<':
-      return v1 < v2 ? options.fn(this) : options.inverse(this);
-    case '<=':
-      return v1 <= v2 ? options.fn(this) : options.inverse(this);
-    case '>':
-      return v1 > v2 ? options.fn(this) : options.inverse(this);
-    case '>=':
-      return v1 >= v2 ? options.fn(this) : options.inverse(this);
-    default:
-      return options.inverse(this);
-  }
-});
-Handlebars.registerHelper('buildPaginationLink', (param, value, currentUrl) => {
-  if (currentUrl && typeof currentUrl === 'string') {
-    const queryParams = new URLSearchParams(currentUrl.split('?')[1]);
-    queryParams.set(param, value);
-    
-    return `${currentUrl.split('?')[0]}?${queryParams.toString()}`;
-  } else {
-    console.log('Error: currentUrl no está definido o no es una cadena.');
-    return currentUrl; 
-  }
-});
-
-Handlebars.registerHelper('buildFilterUrl', (currentUrl, filters) => {
-  if (typeof currentUrl !== 'string') {
-    console.log('Error: currentUrl no está definido o no es una cadena.');
-    return currentUrl;
-  }
-
-  const currentParams = new URLSearchParams(currentUrl.split('?')[1] || '');
-
-  for (const param in filters) {
-    const value = filters[param];
-    if (value !== undefined && value !== '') {
-      currentParams.set(param, value);
-    } else {
-      currentParams.delete(param);
-    }
-  }
-
-  return `${currentUrl.split('?')[0]}?${currentParams.toString()}`;
-});
-
-// const USE_MONGO_DB = require('../config/config');
-// const productManager = USE_MONGO_DB ? new ProductManagerMongo() : new ProductManagerFile();
-
-productsViewsRouter.get("/", async (req, res) => {
+productViewRouter.get("/", async (req, res) => {
+    try {
+      const token = req.cookies.token;
+      if (token) {
+        const decodedToken = jwt.verify(token,  process.env.JWT_SECRET);
   
-
-  const page = req.query.page || 1;
-  const limit = req.query.limit || 10;
-  const sort = req.query.sort || "";
-  const category = req.query.category || "";
-  const stock = req.query.stock || "";
-
-  const query = {};
-
-  if (category) {
-    query.category = { $regex: category, $options: "i" };
-  }
-
-  if (stock !== "") {
-    if (stock === "+6") {
-      query.stock = { $gt: 6 };
-    } else {
-      query.stock = parseInt(stock);
+        if (decodedToken && decodedToken.user) {
+          const currentUser = decodedToken.user;
+  
+          const { sort, categoryFilter, stock, limit = 10, page = 1 } = req.query;
+          const query = {};
+          if (categoryFilter) {
+            query.category = categoryFilter;
+          }
+          if (stock) {
+            query.stock = parseInt(stock);
+          }
+  
+          let sortQuery = { price: 1 };
+          if (sort === "desc") {
+            sortQuery = { price: -1 };
+          }
+          const parsedLimit = parseInt(limit, 10);
+          const options = {
+            sort: sortQuery,
+            limit: isNaN(parsedLimit) ? 10 : parsedLimit,
+            page: parseInt(page),
+          };
+  
+          const categories = await Products.distinct("category");
+          const products = await Products.paginate(query, options);
+  
+          const cart = currentUser.cart;
+  
+          const transformProducts = products.docs.map((product) => {
+            return {
+              id: product._id,
+              title: product.title,
+              price: product.price,
+              stock: product.stock,
+              category: product.category,
+              description: product.description,
+              cart: cart,
+            };
+          });
+  
+          res.render("products", {
+            products: transformProducts,
+            categories,
+            currentPage: products.page,
+            totalPages: products.totalPages,
+            categoryFilter,
+            stock,
+            sort,
+            currentUser,
+          });
+        } else {
+          res.redirect("/login");
+        }
+      } else {
+        res.redirect("/login");
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: error.message });
     }
-  }
-
-  let sortQuery = {};
-
-  if (sort === "asc") {
-    sortQuery = { price: 1 };
-  } else if (sort === "desc") {
-    sortQuery = { price: -1 };
-  }
-
-  const options = {
-    page: page,
-    limit: limit,
-    sort: sortQuery,
-  };
-
-  try {
-    const products = await productsModel.paginate(query, options);
-    const allCategories = await productsModel.distinct("category");
-    const selectedCategory = category;
-
-    const categoriesWithSelection = allCategories.map((cat) => ({
-      category: cat,
-      isSelected: cat === selectedCategory,
-    }));
-
-    console.log("Products:", products);
-    console.log(products.totalPages)
-    products.docs = products.docs.map((product) => product.toObject());
-
-    const user = req.session.user;
-
-    const pages = [];
-    for (let i = 1; i <= products.totalPages; i++) {
-      pages.push(i);
+  });
+  
+  productViewRouter.get("/:id", async (req, res) => {
+    try {
+      const product = await Products.findById(req.params.id).lean();
+      if (!product) {
+        return res.status(404).json({ message: "Cannot find product" });
+      }
+      console.log(product);
+      res.render("product", { product });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-
-    const currentUrl = req.originalUrl;
-
-    return res.render("products", {
-  products,
-  user,
-  showHeader: true,
-  pages,
-  categoriesWithSelection,
-  requestUrl: currentUrl,
-  // Pasar todos los filtros actuales aquí
-  limit: limit,
-  category: category,
-  stock: stock,
-  sort: sort,
-});
-  } catch (error) {
-    console.error("Error:", error);
-    return res
-      .status(500)
-      .json({ status: "error", error: "Internal server error" });
-  }
-});
-
-module.exports = productsViewsRouter;
+  });
+  
+  productViewRouter.get("/clear", (req, res) => {
+    res.redirect("/products");
+  });
+  
+  module.exports = productViewRouter;

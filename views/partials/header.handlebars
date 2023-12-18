@@ -1,94 +1,11 @@
-{{#if showHeader}}
-  <header>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="d-flex justify-content-between w-100">
-            <div class="navbar-nav">
-              <a class="nav-link" aria-current="page" href="/home">Inicio</a>
-              <a
-                class="nav-link"
-                aria-current="page"
-                href="./products.handlebars"
-              >Productos</a>
-
-            </div>
-            <div class="d-flex align-items-center">
-              {{#if user}}
-                <div class="dropdown">
-                  <button
-                    class="dropdown-toggle btn btn-sm no-border"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    {{user.name}}
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a
-                        class="btn dropdown-item text-center mb-2 btn-sm"
-                        href="../profile.handlebars"
-                      >Mi perfil</a></li>
-                    {{#if user.admin}}
-                      <li><a
-                          class="btn dropdown-item text-center mb-2 btn-sm"
-                          href="./dashboard.handlebars"
-                        >Gestionar</a></li>
-                    {{/if}}
-
-                    <li><form
-                        class="btn d-flex justify-content-center align-items-center mb-2 btn-sm"
-                        action="/api/sessions/logout"
-                        method="POST"
-                      >
-                        <button
-                          type="submit"
-                          class="btn btn-danger btn-sm"
-                        >Cerrar sesión</button>
-                      </form></li>
-                  </ul>
-                </div>
-              {{else}}
-                <a
-                  href="/sessions/register"
-                  class="btn btn-secondary mx-2 btn-sm"
-                >Registrarse</a>
-                <a
-                  href="/sessions/login "
-                  class="btn btn-primary btn-sm"
-                >Iniciar Sesion</a>
-              {{/if}}
-              <a href="/api/carts" class="mx-4"><svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="gray"
-                  class="bi bi-cart-fill"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
-                  />
-                </svg></a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </nav>
-
-  </header>
-{{/if}}
+<header>
+        <h1>My sweet</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/products">Productos</a></li>
+                <!-- Otros elementos de navegación -->
+            </ul>
+        </nav>
+        <a href="/api/session/logout">Cerrar Sesión</a>
+    </header>
