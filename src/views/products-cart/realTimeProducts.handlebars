@@ -1,0 +1,103 @@
+<header class="navBar">
+  <a href="/profile"><img src="./img/usuario.png" alt="Imagen de perfil" class="navImg"></a>
+  <div>
+    <p>Bienvenido <span class="bold">{{user.first_name}} {{#if user.last_name}}{{user.last_name}}{{/if}}</span>!</p>
+    {{#if user.email}} <p><span class="bold">Email: </span>{{user.email}}</p> {{/if}}
+    <p><span class="bold">Role: </span>{{user.role}}</p>
+  </div>
+  <a href="/logout"><img src="./img/logout.png" alt="Icono para cierre de sesión" class="navImg"></a>
+</header>
+
+<section class="productsContainer">
+  <h1>Lista de productos</h1>
+  {{#if noProducts}}
+  <p>No hay productos disponibles</p>
+  {{else}}
+  <table id="productos" class="table">
+    <tr>
+      <th>Id</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Code</th>
+      <th>Price</th>
+      <th>Status</th>
+      <th>Stock</th>
+      <th>Category</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+    {{#each products}}
+    <tr id="{{this._id}}" data-user-id="{{../user.userId}}">
+      <td>{{this._id}}</td>
+      <td><input type="text" name="title" value="{{this.title}}" contenteditable="true" /></td>
+      <td><input type="text" name="description" value="{{this.description}}" contenteditable="true" /></td>
+      <td><input type="text" name="code" value="{{this.code}}" contenteditable="true" /></td>
+      <td><input type="number" name="price" value="{{this.price}}" contenteditable="true" /></td>
+      <td><input type="text" name="status" value="{{this.status}}" contenteditable="true" /></td>
+      <td><input type="number" name="stock" value="{{this.stock}}" contenteditable="true" /></td>
+      <td><input type="text" name="category" value="{{this.category}}" contenteditable="true" /></td>
+      <td>
+        <button class="button blueButton" onclick="updateProduct('{{this._id}}')">Edit</button>
+      </td>
+      <td>
+        <button class="button redButton" onclick="deleteProduct('{{this._id}}')">Delete</button>
+      </td>
+    </tr>
+    {{/each}}
+  </table>
+  <article class="pagination">
+    <p>Page {{productsData.page}} de {{productsData.totalPages}}</p>
+    <div class="linksContainer">
+      {{#if productsData.hasPrevPage}}
+      <a href="{{generatePaginationLink productsData.prevPage}}" class="bold">Prev Page</a>
+      {{/if}}
+      {{#if productsData.hasNextPage}}
+      <a href="{{generatePaginationLink productsData.nextPage}}" class="bold">Next Page</a>
+      {{/if}}
+    </div>
+  </article>
+  {{/if}}
+</section>
+
+<form id="add-product-form" class="form" enctype="multipart/form-data">
+  <legend>Add Product</legend>
+
+  <label for="title">Title:</label>
+  <input type="text" id="title" name="title" required />
+
+  <label for="description">Description: </label>
+  <textarea id="description" name="description" required></textarea>
+
+  <label for="code">Code: </label>
+  <input type="text" id="code" name="code" required />
+
+  <label for="price">Price:</label>
+  <input type="text" id="price" name="price" pattern="\d+(\.\d{1,2})?" title="Ingrese un número válido" required />
+
+  <div class="status-container">
+    <p>Status:</p>
+
+    <div class="status-options">
+      <label for="status-true" class="status-option">True </label>
+      <input type="radio" id="status-true" name="status" value="true" checked />
+
+      <label for="status-false" class="status-option">False </label>
+      <input type="radio" id="status-false" name="status" value="false" />
+    </div>
+  </div>
+
+  <label for="stock">Stock:</label>
+  <input type="number" id="stock" name="stock" required />
+
+  <label for="category">Category:</label>
+  <input type="text" id="category" name="category" required />
+
+  <label for="thumbnails">Thumbnails:</label>
+  <input type="file" id="thumbnails" name="thumbnails" multiple>
+
+  <input type="submit" value="Add Product" id="addProductButton" data-user-id="{{user.userId}}" />
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/products-cart/products.real.js"></script>
+  

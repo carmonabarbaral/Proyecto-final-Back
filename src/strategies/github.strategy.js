@@ -7,7 +7,8 @@ const githubStrategy = new GithubSt(
   {
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackUrl: `${process.env.BASE_URL}/api/sessions/github-callback`,
+    callbackUrl: `${process.env.BASE_URL}api/session/github-callback
+    `,
   },
   async (accessToken, refreshToken, profile, done) => {
     try {

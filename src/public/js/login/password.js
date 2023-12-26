@@ -7,7 +7,7 @@ if (sendEmailButton) {
   sendEmailButton.addEventListener("click", async (e) => {
     e.preventDefault();
     const email = emailInput.value;
-    const response = await fetch("/api/users/passwordrecovery", {
+    const response = await fetch("/api/user/passwordrecovery", {
       method: "POST",
       body: JSON.stringify({
         email,

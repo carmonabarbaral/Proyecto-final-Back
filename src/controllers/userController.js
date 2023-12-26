@@ -65,7 +65,7 @@ class UsersController {
       const resetLink = `${process.env.BASE_URL}/password/reset/${token}`;
 
       await transportGmail.sendMail({
-        from: `Shop Easy < ${process.env.EMAIL_USER}>`,
+        from: `my sweet < ${process.env.EMAIL_USER}>`,
         to: user.email,
         subject: "Password Recovery",
         html: `<div>

@@ -5,7 +5,7 @@ const uuid = require("uuid");
 const expect = chai.expect;
 const requester = supertest("http://localhost:3000");
 
-describe("Testing ecommerce ShopEasy", () => {
+describe("Testing My sweet", () => {
   describe("Test de Products", () => {
     let productMock;
 
@@ -84,7 +84,7 @@ describe("Testing ecommerce ShopEasy", () => {
         last_name: "Apellido",
         email: `${uuid.v4()}@gmail.com`,
         age: 22,
-        password: "qwerty",
+        password: "cielo",
       };
     });
 
@@ -112,8 +112,8 @@ describe("Testing ecommerce ShopEasy", () => {
 
     it("El endpoint POST /api/sessions debe loguear correctamente al usuario y DEVOLVER UNA COOKIE", async () => {
       userCredentials = {
-        email: "santiagomanuelferrer@gmail.com",
-        password: "qwerty",
+        email: "barbaracarmona40@gmail.com",
+        password: "Cielo",
       };
 
       const { header, statusCode, _body } = await requester

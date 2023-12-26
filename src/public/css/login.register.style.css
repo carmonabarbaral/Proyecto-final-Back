@@ -85,8 +85,8 @@
   border-radius: 20px;
   border: 0 !important;
   outline: 0 !important;
-  background: teal;
-  color: white;
+  background: rgb(226, 150, 210);
+  color:black;
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }

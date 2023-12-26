@@ -1,7 +1,7 @@
 <header class="navBar">
     <a href="/profile"><img src="/img/usuario.png" alt="Imagen de perfil" class="navImg"></a>
     <div>
-        <p>Welcome <span class="bold">{{user.first_name}} {{#if user.last_name}}{{user.last_name}}{{/if}}</span>!</p>
+        <p>Bienvenido <span class="bold">{{user.first_name}} {{#if user.last_name}}{{user.last_name}}{{/if}}</span>!</p>
         {{#if user.email}} <p><span class="bold">Email: </span>{{user.email}}</p> {{/if}}
         <p><span class="bold">Role: </span>{{user.role}}</p>
     </div>
@@ -10,7 +10,7 @@
 </header>
 
 <section class="productDetailContainer">
-    <h1>Product Detail</h1>
+    <h1>Detalle del producto</h1>
     <article>
         <h3>{{product.title}}</h3>
         <p><span class="bold">Id: </span>{{product._id}}</p>
