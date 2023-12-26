@@ -1,11 +1,84 @@
-<header>
-        <h1>Welcome Swett moments</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/products">Productos</a></li>
-                <!-- Otros elementos de navegación -->
-            </ul>
-        </nav>
-        <a href="/api/sessions/logout">Cerrar Sesión</a>
-    </header>
+<header class="navBar">
+  <a href="/home"><img
+      class="logo"
+      src="/img/favicon.ico"
+      alt="Logo Dixer Gaming"
+    /></a>
+  <div>
+    <p>Welcome
+      <span class="bold">{{user.first_name}}
+        {{#if user.last_name}}{{user.last_name}}{{/if}}</span></p>
+    {{#if user.email}}
+      <p><span class="bold">Email: </span>{{user.email}}</p>
+    {{/if}}
+    <p><span class="bold">Role: </span>{{user.role}}</p>
+  </div>
+  <nav class="menu">
+    <ul>
+      <li style="display: flex; justify-content: center; align-items: center;">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          class="bi bi-person-fill"
+          viewBox="0 0 16 16"
+          style="background-color: #333"
+        >
+          <path
+            d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"
+          />
+        </svg><p>PROFILE</p>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          fill="currentColor"
+          class="bi bi-caret-down-fill"
+          viewBox="0 0 16 16"
+          style="background-color: #333"
+        >
+          <path
+            d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+          />
+        </svg>
+        <ul class="submenu">
+          <li>
+            <a href="/profile"><svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-eye-fill"
+                viewBox="0 0 16 16"
+                style="background-color: transparent;"
+              >
+                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                <path
+                  d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"
+                />
+              </svg>
+              View profile</a></li>
+          <li><a href="logout" style="color: red;"><svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-box-arrow-right"
+                viewBox="0 0 16 16"
+                style="background-color: transparent;"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"
+                />
+              </svg>
+              Logout</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</header>

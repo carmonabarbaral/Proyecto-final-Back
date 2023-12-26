@@ -1,19 +1,56 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>Lista de Productos</title>
- <link rel="stylesheet" type="text/css" href="../../public/css/mainStyle.css" />
-</head>
-
-<body>
-  <h1>Lista de Productos</h1>
-
-  <ul id="product-list">
-    {{#each productos}}
-    <li>{{title}} - Precio: {{price}}</li>
-    {{/each}}
-  </ul>
-</body>
-
-</html>
+{{>header}}
+<section class="homeSection">
+  <h1 class="titleHome">DIXER GAMING</h1>
+  <div class="containerHome">
+    {{#if roles.adminRole}}
+    <div class="card">
+      <p class="heading">Users</p>
+      <p class="para"> Profile management and access privilege control on the platform.
+      </p><div class="overlay"></div>
+      <a href="/users" class="card-btn">Click</a>
+    </div>
+    <div class="card">
+      <p class="heading">Inventory</p>
+      <p class="para"> Stock control and tracking of stored products.
+      </p><div class="overlay"></div>
+      <a class="card-btn" href="/realtimeproducts">Click</a>
+    </div>
+    {{/if}}
+    {{#if roles.premiumRole}}
+    <div class="card">
+      <p class="heading">Chat</p>
+      <p class="para"> Instant communication for quick interactions and efficient collaboration.
+      </p><div class="overlay"></div>
+      <a class="card-btn" href="/chat">Click</a>
+    </div>
+      <div class="card">
+        <p class="heading">Products</p>
+        <p class="para"> Display and management of available item catalog.
+        </p><div class="overlay"></div>
+        <a class="card-btn" href="/products">Click</a>
+      </div>
+      <div class="card">
+        <p class="heading">Inventory</p>
+        <p class="para"> Stock control and tracking of stored products.
+        </p><div class="overlay"></div>
+        <a class="card-btn" href="/realtimeproducts">Click</a>
+      </div>
+    {{/if}}
+    {{#if roles.userRole}}
+    <div class="card">
+      <p class="heading">Chat</p>
+      <p class="para"> Instant communication for quick interactions and efficient collaboration.
+      </p><div class="overlay"></div>
+      <a class="card-btn" href="/chat">Click</a>
+    </div>
+      <div class="card">
+        <p class="heading">Products</p>
+        <p class="para"> Display and management of available item catalog.
+        </p><div class="overlay"></div>
+        <a class="card-btn" href="/products">Click</a>
+      </div>
+    {{/if}}
+  </div>
+  
+  
+</section>
